@@ -1,0 +1,113 @@
+## ErrorOrResult Namespace
+- **[ErrorExtensions](ErrorExtensions.md 'ErrorOrResult\.ErrorExtensions')**
+  - **[WithDescription\(this Error, string\)](ErrorExtensions.WithDescription.WFRR9U8TFG5BDHRZ2R1NCAIQB.md 'ErrorOrResult\.ErrorExtensions\.WithDescription\(this ErrorOrResult\.Error, string\)')**
+- **[Result](Result.md 'ErrorOrResult\.Result')**
+  - **[Create&lt;TOutput&gt;\(Nullable&lt;TOutput&gt;, Nullable&lt;Error&gt;\)](Result.Create.md#ErrorOrResult.Result.Create_TOutput_(System.Nullable_TOutput_,System.Nullable_ErrorOrResult.Error_) 'ErrorOrResult\.Result\.Create\<TOutput\>\(System\.Nullable\<TOutput\>, System\.Nullable\<ErrorOrResult\.Error\>\)')**
+  - **[Create&lt;TOutput&gt;\(TOutput, Nullable&lt;Error&gt;\)](Result.Create.md#ErrorOrResult.Result.Create_TOutput_(TOutput,System.Nullable_ErrorOrResult.Error_) 'ErrorOrResult\.Result\.Create\<TOutput\>\(TOutput, System\.Nullable\<ErrorOrResult\.Error\>\)')**
+  - **[Ensure&lt;TOutput&gt;\(TOutput, Func&lt;TOutput,bool&gt;, Error\)](Result.Ensure.PDSAUZYTSY5BGDQ5WQARZU1VC.md 'ErrorOrResult\.Result\.Ensure\<TOutput\>\(TOutput, System\.Func\<TOutput,bool\>, ErrorOrResult\.Error\)')**
+  - **[Failure\(Error\)](Result.Failure.md#ErrorOrResult.Result.Failure(ErrorOrResult.Error) 'ErrorOrResult\.Result\.Failure\(ErrorOrResult\.Error\)')**
+  - **[Failure\(ErrorInfo\)](Result.Failure.md#ErrorOrResult.Result.Failure(ErrorOrResult.ErrorInfo) 'ErrorOrResult\.Result\.Failure\(ErrorOrResult\.ErrorInfo\)')**
+  - **[Failure\(Error\[\]\)](Result.Failure.md#ErrorOrResult.Result.Failure(ErrorOrResult.Error[]) 'ErrorOrResult\.Result\.Failure\(ErrorOrResult\.Error\[\]\)')**
+  - **[Failure\(List&lt;Error&gt;\)](Result.Failure.md#ErrorOrResult.Result.Failure(System.Collections.Generic.List_ErrorOrResult.Error_) 'ErrorOrResult\.Result\.Failure\(System\.Collections\.Generic\.List\<ErrorOrResult\.Error\>\)')**
+  - **[Failure&lt;TOutput&gt;\(Error\)](Result.Failure.md#ErrorOrResult.Result.Failure_TOutput_(ErrorOrResult.Error) 'ErrorOrResult\.Result\.Failure\<TOutput\>\(ErrorOrResult\.Error\)')**
+  - **[Failure&lt;TOutput&gt;\(ErrorInfo\)](Result.Failure.md#ErrorOrResult.Result.Failure_TOutput_(ErrorOrResult.ErrorInfo) 'ErrorOrResult\.Result\.Failure\<TOutput\>\(ErrorOrResult\.ErrorInfo\)')**
+  - **[Failure&lt;TOutput&gt;\(Error\[\]\)](Result.Failure.md#ErrorOrResult.Result.Failure_TOutput_(ErrorOrResult.Error[]) 'ErrorOrResult\.Result\.Failure\<TOutput\>\(ErrorOrResult\.Error\[\]\)')**
+  - **[Failure&lt;TOutput&gt;\(List&lt;Error&gt;\)](Result.Failure.md#ErrorOrResult.Result.Failure_TOutput_(System.Collections.Generic.List_ErrorOrResult.Error_) 'ErrorOrResult\.Result\.Failure\<TOutput\>\(System\.Collections\.Generic\.List\<ErrorOrResult\.Error\>\)')**
+  - **[Of&lt;TOutput&gt;\(Func&lt;Result&lt;TOutput&gt;&gt;\)](Result.Of.6OZR9VPKH8BG1OOM1EUMXSR0D.md 'ErrorOrResult\.Result\.Of\<TOutput\>\(System\.Func\<ErrorOrResult\.Result\<TOutput\>\>\)')**
+  - **[OfAsync&lt;TOutput&gt;\(Func&lt;Task&lt;Result&lt;TOutput&gt;&gt;&gt;\)](Result.OfAsync.TUOJ8BIIOHNLTOZ2EFPL9DNIC.md 'ErrorOrResult\.Result\.OfAsync\<TOutput\>\(System\.Func\<System\.Threading\.Tasks\.Task\<ErrorOrResult\.Result\<TOutput\>\>\>\)')**
+  - **[Success\(\)](Result.Success.md#ErrorOrResult.Result.Success() 'ErrorOrResult\.Result\.Success\(\)')**
+  - **[Success&lt;TOutput&gt;\(TOutput\)](Result.Success.md#ErrorOrResult.Result.Success_TOutput_(TOutput) 'ErrorOrResult\.Result\.Success\<TOutput\>\(TOutput\)')**
+  - **[Try&lt;TOutput&gt;\(Func&lt;TOutput&gt;\)](Result.Try.X6I13YPHXNJ0IWAKLB8TRHZLB.md 'ErrorOrResult\.Result\.Try\<TOutput\>\(System\.Func\<TOutput\>\)')**
+  - **[TryAsync&lt;TOutput&gt;\(Func&lt;Task&lt;TOutput&gt;&gt;\)](Result.TryAsync.6HIRWBMFRGN25909M4YTIZ701.md 'ErrorOrResult\.Result\.TryAsync\<TOutput\>\(System\.Func\<System\.Threading\.Tasks\.Task\<TOutput\>\>\)')**
+- **[ResultExtensions](ResultExtensions.md 'ErrorOrResult\.ResultExtensions')**
+  - **[Bind&lt;TInput,TOutput&gt;\(this Result&lt;TInput&gt;, Func&lt;TInput,Result&lt;TOutput&gt;&gt;\)](ResultExtensions.Bind.62TML868BKDZRMZDA6MLED8WE.md 'ErrorOrResult\.ResultExtensions\.Bind\<TInput,TOutput\>\(this ErrorOrResult\.Result\<TInput\>, System\.Func\<TInput,ErrorOrResult\.Result\<TOutput\>\>\)')**
+  - **[BindAsync&lt;TInput,TOutput&gt;\(this Task&lt;Result&lt;TInput&gt;&gt;, Func&lt;TInput,Task&lt;Result&lt;TOutput&gt;&gt;&gt;\)](ResultExtensions.BindAsync.9XXYYKAPIOKS6HVFZ4G6XC2H1.md 'ErrorOrResult\.ResultExtensions\.BindAsync\<TInput,TOutput\>\(this System\.Threading\.Tasks\.Task\<ErrorOrResult\.Result\<TInput\>\>, System\.Func\<TInput,System\.Threading\.Tasks\.Task\<ErrorOrResult\.Result\<TOutput\>\>\>\)')**
+  - **[Combine&lt;TOutput1,TOutput2&gt;\(this Result&lt;TOutput1&gt;, Result&lt;TOutput2&gt;\)](ResultExtensions.Combine.OFXWJ1B4R343I335DG42MGCB9.md 'ErrorOrResult\.ResultExtensions\.Combine\<TOutput1,TOutput2\>\(this ErrorOrResult\.Result\<TOutput1\>, ErrorOrResult\.Result\<TOutput2\>\)')**
+  - **[Ensure&lt;TOutput&gt;\(this Result&lt;TOutput&gt;, Func&lt;TOutput,bool&gt;, Error\)](ResultExtensions.Ensure.1DPFLR10ZITUO9FVMQWNBC96.md 'ErrorOrResult\.ResultExtensions\.Ensure\<TOutput\>\(this ErrorOrResult\.Result\<TOutput\>, System\.Func\<TOutput,bool\>, ErrorOrResult\.Error\)')**
+  - **[EnsureAsync&lt;TOutput&gt;\(this Task&lt;Result&lt;TOutput&gt;&gt;, Func&lt;TOutput,bool&gt;, Error\)](ResultExtensions.EnsureAsync.CMOWCSPCH8DG8TLAV4NY6IHH2.md 'ErrorOrResult\.ResultExtensions\.EnsureAsync\<TOutput\>\(this System\.Threading\.Tasks\.Task\<ErrorOrResult\.Result\<TOutput\>\>, System\.Func\<TOutput,bool\>, ErrorOrResult\.Error\)')**
+  - **[Map&lt;TInput,TOutput&gt;\(this Result&lt;TInput&gt;, Func&lt;TInput,TOutput&gt;\)](ResultExtensions.Map.BJHXT2CPKH205HWCT9GQ6VEM8.md 'ErrorOrResult\.ResultExtensions\.Map\<TInput,TOutput\>\(this ErrorOrResult\.Result\<TInput\>, System\.Func\<TInput,TOutput\>\)')**
+  - **[MapAsync&lt;TInput,TOutput&gt;\(this Task&lt;Result&lt;TInput&gt;&gt;, Func&lt;TInput,TOutput&gt;\)](ResultExtensions.MapAsync.7C12ZWE16JV9YIEKL9FCSZMK5.md 'ErrorOrResult\.ResultExtensions\.MapAsync\<TInput,TOutput\>\(this System\.Threading\.Tasks\.Task\<ErrorOrResult\.Result\<TInput\>\>, System\.Func\<TInput,TOutput\>\)')**
+  - **[MapError&lt;TOutput&gt;\(this Result&lt;TOutput&gt;, Func&lt;Error,Error&gt;\)](ResultExtensions.MapError.2EQCKB8VLKYZBG88FO8JNHSMA.md 'ErrorOrResult\.ResultExtensions\.MapError\<TOutput\>\(this ErrorOrResult\.Result\<TOutput\>, System\.Func\<ErrorOrResult\.Error,ErrorOrResult\.Error\>\)')**
+  - **[Match&lt;TInput,TOutput&gt;\(this Result&lt;TInput&gt;, Func&lt;TInput,TOutput&gt;, Func&lt;ErrorInfo,TOutput&gt;\)](ResultExtensions.Match.AKZA3GBW5SXVQ4JBA2EFPRDQ.md 'ErrorOrResult\.ResultExtensions\.Match\<TInput,TOutput\>\(this ErrorOrResult\.Result\<TInput\>, System\.Func\<TInput,TOutput\>, System\.Func\<ErrorOrResult\.ErrorInfo,TOutput\>\)')**
+  - **[MatchAsync&lt;TInput,TOutput&gt;\(this Task&lt;Result&lt;TInput&gt;&gt;, Func&lt;TInput,TOutput&gt;, Func&lt;ErrorInfo,TOutput&gt;\)](ResultExtensions.MatchAsync.TA88DFDTBKY4ZV0BHVJAWPPF6.md 'ErrorOrResult\.ResultExtensions\.MatchAsync\<TInput,TOutput\>\(this System\.Threading\.Tasks\.Task\<ErrorOrResult\.Result\<TInput\>\>, System\.Func\<TInput,TOutput\>, System\.Func\<ErrorOrResult\.ErrorInfo,TOutput\>\)')**
+  - **[Switch&lt;TOutput&gt;\(this Result&lt;TOutput&gt;, Action&lt;TOutput&gt;, Action&lt;ErrorInfo&gt;\)](ResultExtensions.Switch.I0Z8VPK7G4EMGYZ2DJIAYPMC2.md 'ErrorOrResult\.ResultExtensions\.Switch\<TOutput\>\(this ErrorOrResult\.Result\<TOutput\>, System\.Action\<TOutput\>, System\.Action\<ErrorOrResult\.ErrorInfo\>\)')**
+  - **[Tap&lt;TOutput&gt;\(this Result&lt;TOutput&gt;, Action&lt;TOutput&gt;\)](ResultExtensions.Tap.TQHYW55JPJQAOFUKRV6GY1SGB.md 'ErrorOrResult\.ResultExtensions\.Tap\<TOutput\>\(this ErrorOrResult\.Result\<TOutput\>, System\.Action\<TOutput\>\)')**
+  - **[TapAsync&lt;TOutput&gt;\(this Task&lt;Result&lt;TOutput&gt;&gt;, Func&lt;TOutput,Task&gt;\)](ResultExtensions.TapAsync.V8KT2PF87U7VYS82MBE3YMNHE.md 'ErrorOrResult\.ResultExtensions\.TapAsync\<TOutput\>\(this System\.Threading\.Tasks\.Task\<ErrorOrResult\.Result\<TOutput\>\>, System\.Func\<TOutput,System\.Threading\.Tasks\.Task\>\)')**
+  - **[TapError&lt;TOutput&gt;\(this Result&lt;TOutput&gt;, Action&lt;ErrorInfo&gt;\)](ResultExtensions.TapError.MWH05R2LSGULNUD3OO4V3K1W5.md 'ErrorOrResult\.ResultExtensions\.TapError\<TOutput\>\(this ErrorOrResult\.Result\<TOutput\>, System\.Action\<ErrorOrResult\.ErrorInfo\>\)')**
+  - **[ThrowOnError&lt;TOutput&gt;\(this Result&lt;TOutput&gt;\)](ResultExtensions.ThrowOnError.RKOPO0DQVV82KIP9XAEFVZRR5.md 'ErrorOrResult\.ResultExtensions\.ThrowOnError\<TOutput\>\(this ErrorOrResult\.Result\<TOutput\>\)')**
+  - **[ThrowOnErrorAsync&lt;TOutput&gt;\(this Task&lt;Result&lt;TOutput&gt;&gt;\)](ResultExtensions.ThrowOnErrorAsync.N2BT5J95XF2E2H7IUIF38K6G1.md 'ErrorOrResult\.ResultExtensions\.ThrowOnErrorAsync\<TOutput\>\(this System\.Threading\.Tasks\.Task\<ErrorOrResult\.Result\<TOutput\>\>\)')**
+- **[ResultHttpExtensions](ResultHttpExtensions.md 'ErrorOrResult\.ResultHttpExtensions')**
+  - **[MatchHttp&lt;TOutput&gt;\(this Result&lt;TOutput&gt;, Func&lt;TOutput,IResult&gt;, Func&lt;ErrorInfo,IResult&gt;\)](ResultHttpExtensions.MatchHttp.5C6XX6L3TO77HZBYTMPX8K63B.md 'ErrorOrResult\.ResultHttpExtensions\.MatchHttp\<TOutput\>\(this ErrorOrResult\.Result\<TOutput\>, System\.Func\<TOutput,Microsoft\.AspNetCore\.Http\.IResult\>, System\.Func\<ErrorOrResult\.ErrorInfo,Microsoft\.AspNetCore\.Http\.IResult\>\)')**
+  - **[MatchHttpAsync&lt;TOutput&gt;\(this Task&lt;Result&lt;TOutput&gt;&gt;, Func&lt;TOutput,IResult&gt;, Func&lt;ErrorInfo,IResult&gt;\)](ResultHttpExtensions.MatchHttpAsync.ND0UDR769ASI5MST7OZAWZ424.md 'ErrorOrResult\.ResultHttpExtensions\.MatchHttpAsync\<TOutput\>\(this System\.Threading\.Tasks\.Task\<ErrorOrResult\.Result\<TOutput\>\>, System\.Func\<TOutput,Microsoft\.AspNetCore\.Http\.IResult\>, System\.Func\<ErrorOrResult\.ErrorInfo,Microsoft\.AspNetCore\.Http\.IResult\>\)')**
+  - **[ToAccepted&lt;TOutput&gt;\(this Result&lt;TOutput&gt;, string\)](ResultHttpExtensions.ToAccepted.S7OYJRO534PG7OK7FV8FXTMM8.md 'ErrorOrResult\.ResultHttpExtensions\.ToAccepted\<TOutput\>\(this ErrorOrResult\.Result\<TOutput\>, string\)')**
+  - **[ToCreated&lt;TOutput&gt;\(this Result&lt;TOutput&gt;, string\)](ResultHttpExtensions.ToCreated.JXUBI6AECUD9BU6O1Q1MIMY68.md 'ErrorOrResult\.ResultHttpExtensions\.ToCreated\<TOutput\>\(this ErrorOrResult\.Result\<TOutput\>, string\)')**
+  - **[ToCreatedAtRoute&lt;TOutput&gt;\(this Result&lt;TOutput&gt;, string, object\)](ResultHttpExtensions.ToCreatedAtRoute.3BD46KO2XPYCS8YUONEQE0244.md 'ErrorOrResult\.ResultHttpExtensions\.ToCreatedAtRoute\<TOutput\>\(this ErrorOrResult\.Result\<TOutput\>, string, object\)')**
+  - **[ToHttpResult\(this Result&lt;None&gt;\)](ResultHttpExtensions.ToHttpResult.md#ErrorOrResult.ResultHttpExtensions.ToHttpResult(thisErrorOrResult.Result_ErrorOrResult.None_) 'ErrorOrResult\.ResultHttpExtensions\.ToHttpResult\(this ErrorOrResult\.Result\<ErrorOrResult\.None\>\)')**
+  - **[ToHttpResult&lt;TOutput&gt;\(this Result&lt;TOutput&gt;, Func&lt;TOutput,IResult&gt;\)](ResultHttpExtensions.ToHttpResult.md#ErrorOrResult.ResultHttpExtensions.ToHttpResult_TOutput_(thisErrorOrResult.Result_TOutput_,System.Func_TOutput,Microsoft.AspNetCore.Http.IResult_) 'ErrorOrResult\.ResultHttpExtensions\.ToHttpResult\<TOutput\>\(this ErrorOrResult\.Result\<TOutput\>, System\.Func\<TOutput,Microsoft\.AspNetCore\.Http\.IResult\>\)')**
+  - **[ToHttpResultAsync\(this Task&lt;Result&lt;None&gt;&gt;\)](ResultHttpExtensions.ToHttpResultAsync.md#ErrorOrResult.ResultHttpExtensions.ToHttpResultAsync(thisSystem.Threading.Tasks.Task_ErrorOrResult.Result_ErrorOrResult.None__) 'ErrorOrResult\.ResultHttpExtensions\.ToHttpResultAsync\(this System\.Threading\.Tasks\.Task\<ErrorOrResult\.Result\<ErrorOrResult\.None\>\>\)')**
+  - **[ToHttpResultAsync&lt;TOutput&gt;\(this Task&lt;Result&lt;TOutput&gt;&gt;, Func&lt;TOutput,IResult&gt;\)](ResultHttpExtensions.ToHttpResultAsync.md#ErrorOrResult.ResultHttpExtensions.ToHttpResultAsync_TOutput_(thisSystem.Threading.Tasks.Task_ErrorOrResult.Result_TOutput__,System.Func_TOutput,Microsoft.AspNetCore.Http.IResult_) 'ErrorOrResult\.ResultHttpExtensions\.ToHttpResultAsync\<TOutput\>\(this System\.Threading\.Tasks\.Task\<ErrorOrResult\.Result\<TOutput\>\>, System\.Func\<TOutput,Microsoft\.AspNetCore\.Http\.IResult\>\)')**
+  - **[ToNoContent\(this Result&lt;None&gt;\)](ResultHttpExtensions.ToNoContent.0B6HN9MOU68342IZVTVDGK55F.md 'ErrorOrResult\.ResultHttpExtensions\.ToNoContent\(this ErrorOrResult\.Result\<ErrorOrResult\.None\>\)')**
+  - **[ToOk&lt;TOutput&gt;\(this Result&lt;TOutput&gt;\)](ResultHttpExtensions.ToOk.IIHC480YE8VO6X4CF05D3NFB7.md 'ErrorOrResult\.ResultHttpExtensions\.ToOk\<TOutput\>\(this ErrorOrResult\.Result\<TOutput\>\)')**
+  - **[ToProblem\(this ErrorInfo\)](ResultHttpExtensions.ToProblem.PDZBGXHK1GWMDNEA2HYFD5HBE.md 'ErrorOrResult\.ResultHttpExtensions\.ToProblem\(this ErrorOrResult\.ErrorInfo\)')**
+  - **[ToValidationProblem\(this ErrorInfo\)](ResultHttpExtensions.ToValidationProblem.XQ0602BW5WNBMKDPBNRTVTNR4.md 'ErrorOrResult\.ResultHttpExtensions\.ToValidationProblem\(this ErrorOrResult\.ErrorInfo\)')**
+- **[ResultLinqExtensions](ResultLinqExtensions.md 'ErrorOrResult\.ResultLinqExtensions')**
+  - **[Select&lt;TSource,TOutput&gt;\(this Result&lt;TSource&gt;, Func&lt;TSource,TOutput&gt;\)](ResultLinqExtensions.Select.EEAARHDZVFSWFT808U6U7EW7A.md 'ErrorOrResult\.ResultLinqExtensions\.Select\<TSource,TOutput\>\(this ErrorOrResult\.Result\<TSource\>, System\.Func\<TSource,TOutput\>\)')**
+  - **[SelectMany&lt;TSource,TCollection,TOutput&gt;\(this Result&lt;TSource&gt;, Func&lt;TSource,Result&lt;TCollection&gt;&gt;, Func&lt;TSource,TCollection,TOutput&gt;\)](ResultLinqExtensions.SelectMany.md#ErrorOrResult.ResultLinqExtensions.SelectMany_TSource,TCollection,TOutput_(thisErrorOrResult.Result_TSource_,System.Func_TSource,ErrorOrResult.Result_TCollection__,System.Func_TSource,TCollection,TOutput_) 'ErrorOrResult\.ResultLinqExtensions\.SelectMany\<TSource,TCollection,TOutput\>\(this ErrorOrResult\.Result\<TSource\>, System\.Func\<TSource,ErrorOrResult\.Result\<TCollection\>\>, System\.Func\<TSource,TCollection,TOutput\>\)')**
+  - **[SelectMany&lt;TSource,TOutput&gt;\(this Result&lt;TSource&gt;, Func&lt;TSource,Result&lt;TOutput&gt;&gt;\)](ResultLinqExtensions.SelectMany.md#ErrorOrResult.ResultLinqExtensions.SelectMany_TSource,TOutput_(thisErrorOrResult.Result_TSource_,System.Func_TSource,ErrorOrResult.Result_TOutput__) 'ErrorOrResult\.ResultLinqExtensions\.SelectMany\<TSource,TOutput\>\(this ErrorOrResult\.Result\<TSource\>, System\.Func\<TSource,ErrorOrResult\.Result\<TOutput\>\>\)')**
+- **[TaskExtensions](TaskExtensions.md 'ErrorOrResult\.TaskExtensions')**
+  - **[ToResultAsync&lt;TOutput&gt;\(this Task&lt;Nullable&lt;TOutput&gt;&gt;, Error\)](TaskExtensions.ToResultAsync.md#ErrorOrResult.TaskExtensions.ToResultAsync_TOutput_(thisSystem.Threading.Tasks.Task_System.Nullable_TOutput__,ErrorOrResult.Error) 'ErrorOrResult\.TaskExtensions\.ToResultAsync\<TOutput\>\(this System\.Threading\.Tasks\.Task\<System\.Nullable\<TOutput\>\>, ErrorOrResult\.Error\)')**
+  - **[ToResultAsync&lt;TOutput&gt;\(this Task&lt;TOutput&gt;\)](TaskExtensions.ToResultAsync.md#ErrorOrResult.TaskExtensions.ToResultAsync_TOutput_(thisSystem.Threading.Tasks.Task_TOutput_) 'ErrorOrResult\.TaskExtensions\.ToResultAsync\<TOutput\>\(this System\.Threading\.Tasks\.Task\<TOutput\>\)')**
+  - **[ToResultAsync&lt;TOutput&gt;\(this Task&lt;TOutput&gt;, Error\)](TaskExtensions.ToResultAsync.md#ErrorOrResult.TaskExtensions.ToResultAsync_TOutput_(thisSystem.Threading.Tasks.Task_TOutput_,ErrorOrResult.Error) 'ErrorOrResult\.TaskExtensions\.ToResultAsync\<TOutput\>\(this System\.Threading\.Tasks\.Task\<TOutput\>, ErrorOrResult\.Error\)')**
+- **[Error](Error.md 'ErrorOrResult\.Error')**
+  - **[Error\(string, string, ErrorType\)](Error..ctor.3MU8J2M46MIYQXAH9BSTS6DQ5.md 'ErrorOrResult\.Error\.Error\(string, string, ErrorOrResult\.ErrorType\)')**
+  - **[Code](Error.Code.md 'ErrorOrResult\.Error\.Code')**
+  - **[Description](Error.Description.md 'ErrorOrResult\.Error\.Description')**
+  - **[NumericType](Error.NumericType.md 'ErrorOrResult\.Error\.NumericType')**
+  - **[Type](Error.Type.md 'ErrorOrResult\.Error\.Type')**
+  - **[BadRequest\(string, string\)](Error.BadRequest.2S15IPC1T1XA7FBM51ABBL3YE.md 'ErrorOrResult\.Error\.BadRequest\(string, string\)')**
+  - **[Conflict\(string, string\)](Error.Conflict.N24T8H54MBQFLXE4RICIL1IS9.md 'ErrorOrResult\.Error\.Conflict\(string, string\)')**
+  - **[Custom\(string, string, ErrorType\)](Error.Custom.Y4HXL9GT85UIW79MIIO6BIJ2D.md 'ErrorOrResult\.Error\.Custom\(string, string, ErrorOrResult\.ErrorType\)')**
+  - **[Deconstruct\(string, string, ErrorType\)](Error.Deconstruct.Z90LW8QLDL9WITBJFPPSN2SC6.md 'ErrorOrResult\.Error\.Deconstruct\(string, string, ErrorOrResult\.ErrorType\)')**
+  - **[Failure\(string, string\)](Error.Failure.RJKS3WCMWZHV8UAR98S77I7ID.md 'ErrorOrResult\.Error\.Failure\(string, string\)')**
+  - **[Forbidden\(string, string\)](Error.Forbidden.HFVML90ZF0XDS5VOOBAQ4DBM.md 'ErrorOrResult\.Error\.Forbidden\(string, string\)')**
+  - **[NotFound\(string, string\)](Error.NotFound.7H30UXP9GX0SR5V8BTZ2XFCL8.md 'ErrorOrResult\.Error\.NotFound\(string, string\)')**
+  - **[Unauthorized\(string, string\)](Error.Unauthorized.NKJ5AVODII3HUF1R89G3VZG0A.md 'ErrorOrResult\.Error\.Unauthorized\(string, string\)')**
+  - **[Unexpected\(string, string\)](Error.Unexpected.36VQZYFHCWIA1MMVXWVM6A3QB.md 'ErrorOrResult\.Error\.Unexpected\(string, string\)')**
+  - **[Validation\(string, string\)](Error.Validation.4WXO4A65VYKB2LLCOF2XPM5U.md 'ErrorOrResult\.Error\.Validation\(string, string\)')**
+- **[ErrorInfo](ErrorInfo.md 'ErrorOrResult\.ErrorInfo')**
+  - **[ErrorInfo\(Error\)](ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(ErrorOrResult.Error) 'ErrorOrResult\.ErrorInfo\.ErrorInfo\(ErrorOrResult\.Error\)')**
+  - **[ErrorInfo\(Error\[\]\)](ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(ErrorOrResult.Error[]) 'ErrorOrResult\.ErrorInfo\.ErrorInfo\(ErrorOrResult\.Error\[\]\)')**
+  - **[ErrorInfo\(List&lt;Error&gt;\)](ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(System.Collections.Generic.List_ErrorOrResult.Error_) 'ErrorOrResult\.ErrorInfo\.ErrorInfo\(System\.Collections\.Generic\.List\<ErrorOrResult\.Error\>\)')**
+  - **[AllErrors](ErrorInfo.AllErrors.md 'ErrorOrResult\.ErrorInfo\.AllErrors')**
+  - **[Count](ErrorInfo.Count.md 'ErrorOrResult\.ErrorInfo\.Count')**
+  - **[FirstError](ErrorInfo.FirstError.md 'ErrorOrResult\.ErrorInfo\.FirstError')**
+  - **[ToString\(\)](ErrorInfo.ToString().md 'ErrorOrResult\.ErrorInfo\.ToString\(\)')**
+  - **[implicit operator ErrorInfo\(Error\)](ErrorInfo.op_Implicit.P2AEI6JVK573GO7SQV7M46LM1.md 'ErrorOrResult\.ErrorInfo\.op\_Implicit ErrorOrResult\.ErrorInfo\(ErrorOrResult\.Error\)')**
+  - **[implicit operator ErrorInfo\(Error\[\]\)](ErrorInfo.op_Implicit.JVG3DKXTU88AS9B6QAFCRTNNC.md 'ErrorOrResult\.ErrorInfo\.op\_Implicit ErrorOrResult\.ErrorInfo\(ErrorOrResult\.Error\[\]\)')**
+  - **[implicit operator ErrorInfo\(List&lt;Error&gt;\)](ErrorInfo.op_Implicit.K3T0KLS9217KPX3ABVW3S2FO3.md 'ErrorOrResult\.ErrorInfo\.op\_Implicit ErrorOrResult\.ErrorInfo\(System\.Collections\.Generic\.List\<ErrorOrResult\.Error\>\)')**
+- **[None](None.md 'ErrorOrResult\.None')**
+- **[Result&lt;TOutput&gt;](Result_TOutput_.md 'ErrorOrResult\.Result\<TOutput\>')**
+  - **[Error](Result_TOutput_.Error.md 'ErrorOrResult\.Result\<TOutput\>\.Error')**
+  - **[ErrorInfo](Result_TOutput_.ErrorInfo.md 'ErrorOrResult\.Result\<TOutput\>\.ErrorInfo')**
+  - **[Errors](Result_TOutput_.Errors.md 'ErrorOrResult\.Result\<TOutput\>\.Errors')**
+  - **[IsError](Result_TOutput_.IsError.md 'ErrorOrResult\.Result\<TOutput\>\.IsError')**
+  - **[IsSuccess](Result_TOutput_.IsSuccess.md 'ErrorOrResult\.Result\<TOutput\>\.IsSuccess')**
+  - **[Value](Result_TOutput_.Value.md 'ErrorOrResult\.Result\<TOutput\>\.Value')**
+  - **[Failure\(ErrorInfo\)](Result_TOutput_.Failure.md#ErrorOrResult.Result_TOutput_.Failure(ErrorOrResult.ErrorInfo) 'ErrorOrResult\.Result\<TOutput\>\.Failure\(ErrorOrResult\.ErrorInfo\)')**
+  - **[Failure\(ReadOnlySpan&lt;Error&gt;\)](Result_TOutput_.Failure.md#ErrorOrResult.Result_TOutput_.Failure(System.ReadOnlySpan_ErrorOrResult.Error_) 'ErrorOrResult\.Result\<TOutput\>\.Failure\(System\.ReadOnlySpan\<ErrorOrResult\.Error\>\)')**
+  - **[GetValueOrDefault\(TOutput\)](Result_TOutput_.GetValueOrDefault.FGWX88S1XHXFBID4HALMYW41A.md 'ErrorOrResult\.Result\<TOutput\>\.GetValueOrDefault\(TOutput\)')**
+  - **[GetValueOrThrow\(\)](Result_TOutput_.GetValueOrThrow().md 'ErrorOrResult\.Result\<TOutput\>\.GetValueOrThrow\(\)')**
+  - **[Success\(TOutput\)](Result_TOutput_.Success.2SOBMBHSXAP5U3MEMXM7XOBV8.md 'ErrorOrResult\.Result\<TOutput\>\.Success\(TOutput\)')**
+  - **[ToString\(\)](Result_TOutput_.ToString().md 'ErrorOrResult\.Result\<TOutput\>\.ToString\(\)')**
+  - **[implicit operator Result&lt;TOutput&gt;\(Error\)](Result_TOutput_.op_Implicit.4OK2ARVY8TWAHM3R2I6SPD6PC.md 'ErrorOrResult\.Result\<TOutput\>\.op\_Implicit ErrorOrResult\.Result\<TOutput\>\(ErrorOrResult\.Error\)')**
+  - **[implicit operator Result&lt;TOutput&gt;\(ErrorInfo\)](Result_TOutput_.op_Implicit.T0VQKTQMRX0236CWTFKDMY9S6.md 'ErrorOrResult\.Result\<TOutput\>\.op\_Implicit ErrorOrResult\.Result\<TOutput\>\(ErrorOrResult\.ErrorInfo\)')**
+  - **[implicit operator Result&lt;TOutput&gt;\(TOutput\)](Result_TOutput_.op_Implicit.YWIU07HKNZM5HHVDURW1KL0T3.md 'ErrorOrResult\.Result\<TOutput\>\.op\_Implicit ErrorOrResult\.Result\<TOutput\>\(TOutput\)')**
+- **[ErrorType](ErrorType.md 'ErrorOrResult\.ErrorType')**
+  - **[BadRequest](ErrorType.md#ErrorOrResult.ErrorType.BadRequest 'ErrorOrResult\.ErrorType\.BadRequest')**
+  - **[Conflict](ErrorType.md#ErrorOrResult.ErrorType.Conflict 'ErrorOrResult\.ErrorType\.Conflict')**
+  - **[Failure](ErrorType.md#ErrorOrResult.ErrorType.Failure 'ErrorOrResult\.ErrorType\.Failure')**
+  - **[Forbidden](ErrorType.md#ErrorOrResult.ErrorType.Forbidden 'ErrorOrResult\.ErrorType\.Forbidden')**
+  - **[NotFound](ErrorType.md#ErrorOrResult.ErrorType.NotFound 'ErrorOrResult\.ErrorType\.NotFound')**
+  - **[Unauthorized](ErrorType.md#ErrorOrResult.ErrorType.Unauthorized 'ErrorOrResult\.ErrorType\.Unauthorized')**
+  - **[Unexpected](ErrorType.md#ErrorOrResult.ErrorType.Unexpected 'ErrorOrResult\.ErrorType\.Unexpected')**
+  - **[Validation](ErrorType.md#ErrorOrResult.ErrorType.Validation 'ErrorOrResult\.ErrorType\.Validation')**

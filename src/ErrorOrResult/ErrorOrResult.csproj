@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<!-- NuGet Package Properties -->
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageId>ErrorOrResult</PackageId>
+		<Version>1.0.0</Version>
+		<Authors>vlasta81</Authors>
+		<Company>vlasta81</Company>
+		<Product>ErrorOrResult</Product>
+		<Description>A functional approach to error handling: Return Result&lt;T&gt; or Error - no exceptions, just clean, composable operations</Description>
+		<PackageTags>result;error;error-handling;functional;railway;either;result-pattern;no-exceptions</PackageTags>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<RepositoryUrl>https://github.com/vlasta81/ErrorOrResult</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/vlasta81/ErrorOrResult</PackageProjectUrl>
+		<SignAssembly>False</SignAssembly>
+		<Title>ErrorOrResult</Title>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+</Project>

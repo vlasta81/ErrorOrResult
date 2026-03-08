@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="src/ErrorOrResult/ErrorOrResult.csproj" />
+  <Project Path="tests/ErrorOrResultTests/ErrorOrResultTests.csproj" Id="536033c5-42bb-40a2-a206-7cc7bdf6a5f0" />
+</Solution>

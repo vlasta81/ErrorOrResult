@@ -1,6 +1,6 @@
 # ErrorOrResult
 
-[CZECH](https://github.com/vlasta81/ErrorOrResult/README_CZ.md)
+[CZECH](https://github.com/vlasta81/ErrorOrResult/blob/master/README_CZ.md)
 
 [![NuGet](https://img.shields.io/nuget/v/ErrorOrResult.svg)](https://www.nuget.org/packages/ErrorOrResult/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

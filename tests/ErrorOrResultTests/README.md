@@ -1,6 +1,6 @@
 # ErrorOrResult - Tests
 
-[CZECH](https://github.com/vlasta81/ErrorOrResult/README_CZ.md)
+[CZECH](https://github.com/vlasta81/ErrorOrResult/blob/master/tests/ErrorOrResultTests/README_CZ.md)
 
 This project contains a comprehensive test suite for the ErrorOrResult library using xUnit.
 

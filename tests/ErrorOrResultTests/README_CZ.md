@@ -1,6 +1,6 @@
 # ErrorOrResult - Testy
 
-[ENGLISH](https://github.com/vlasta81/ErrorOrResult/README.md)
+[ENGLISH](https://github.com/vlasta81/ErrorOrResult/blob/master/tests/ErrorOrResultTests/README.md)
 
 Tento projekt obsahuje kompletní sadu testů pro knihovnu ErrorOrResult pomocí xUnit.
 

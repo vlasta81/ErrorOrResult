@@ -1,6 +1,6 @@
 # ErrorOrResult
 
-[ENGLISH](https://github.com/vlasta81/ErrorOrResult/README.md)
+[ENGLISH](https://github.com/vlasta81/ErrorOrResult/)
 
 [![NuGet](https://img.shields.io/nuget/v/ErrorOrResult.svg)](https://www.nuget.org/packages/ErrorOrResult/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

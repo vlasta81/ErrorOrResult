@@ -46,12 +46,12 @@ using ErrorOrResult;
 var successResult = Result<int>.Success(42);
 
 // Chybový výsledek s jednou chybou
-var errorResult = Result<int>.Error(
+var errorResult = Result<int>.Failure(
     Error.NotFound("User.NotFound", "Uživatel nenalezen")
 );
 
 // Chybový výsledek s více chybami
-var multiErrorResult = Result<User>.Error(
+var multiErrorResult = Result<User>.Failure(
     Error.Validation("User.Name", "Jméno je povinné"),
     Error.Validation("User.Email", "Email je neplatný")
 );
@@ -75,7 +75,7 @@ else
 ```csharp
 var message = result.Match(
     onSuccess: value => $"Úspěch: {value}",
-    onError: errors => $"Selhalo: {errors.FirstError.Description}"
+    onFailure: errors => $"Selhalo: {errors.FirstError.Description}"
 );
 ```
 
@@ -162,34 +162,101 @@ var result = await GetUserAsync(id)
     .BindAsync(user => SendEmailAsync(user.Email));
 ```
 
-### LINQ-Style dotazy
+### LINQ syntaxe dotazů
 
 ```csharp
-var results = new[]
-{
-    Result<int>.Success(1),
-    Result<int>.Error(Error.NotFound()),
-    Result<int>.Success(3)
-};
+// Použití LINQ syntaxe dotazů s výsledky
+var result = from user in GetUser(userId)
+             from email in ValidateEmail(user.Email)
+             select email.ToLower();
 
-// Získat pouze úspěšné výsledky
-var successfulValues = results.SuccessValues(); // [1, 3]
-
-// Získat pouze chyby
-var errors = results.Errors(); // [Error.NotFound()]
+// Řetězení více operací
+var processedResult = 
+    from user in GetUser(userId)
+    from validation in ValidateUser(user)
+    from saved in SaveUser(user)
+    select saved;
 ```
 
-### Error Info Builder
+### Více chyb
 
-Vytváření komplexních informací o chybách:
+Vytváření výsledků s více chybami:
 
 ```csharp
-var errorInfo = ErrorInfo.Builder()
-    .Add(Error.Validation("Name", "Jméno je povinné"))
-    .Add(Error.Validation("Email", "Email je neplatný"))
-    .Build();
+// Použití pole chyb
+var errors = new[]
+{
+    Error.Validation("Name", "Jméno je povinné"),
+    Error.Validation("Email", "Email je neplatný")
+};
 
-var result = Result<User>.Error(errorInfo);
+var result = Result<User>.Failure(errors);
+
+// Nebo pomocí ErrorInfo přímo
+var errorInfo = new ErrorInfo(new[]
+{
+    Error.Validation("Name", "Jméno je povinné"),
+    Error.Validation("Email", "Email je neplatný")
+});
+
+var result = Result<User>.Failure(errorInfo);
+```
+
+## Požadavky
+
+- .NET 10.0 nebo vyšší
+- C# 12.0 nebo vyšší (pro record struktury a nullable reference typy)
+
+## Licence
+
+Tento projekt je licencován pod licencí MIT - viz soubor LICENSE pro podrobnosti.
+
+## Autor
+
+**vlasta81**
+
+## Podpora
+
+Pokud narazíte na jakékoli problémy nebo máte dotazy, prosím založte issue na [GitHub repozitáři](https://github.com/vlasta81/ErrorOrResult/issues).
+
+### LINQ syntaxe dotazů
+
+```csharp
+// Použití LINQ syntaxe dotazů s výsledky
+var result = from user in GetUser(userId)
+             from email in ValidateEmail(user.Email)
+             select email.ToLower();
+
+// Řetězení více operací
+var processedResult = 
+    from user in GetUser(userId)
+    from validation in ValidateUser(user)
+    from saved in SaveUser(user)
+    select saved;
+```
+
+### Více chyb
+
+Vytváření výsledků s více chybami:
+
+```csharp
+// Použití pole chyb
+var errors = new[]
+{
+    Error.Validation("Name", "Jméno je povinné"),
+    Error.Validation("Email", "Email je neplatný")
+};
+
+var result = Result<User>.Failure(errors);
+
+// Nebo pomocí ErrorInfo přímo
+var errorInfo = new ErrorInfo(new[]
+{
+    Error.Validation("Name", "Jméno je povinné"),
+    Error.Validation("Email", "Email je neplatný")
+});
+
+var result = Result<User>.Failure(errorInfo);
 ```
 
 ## Požadavky

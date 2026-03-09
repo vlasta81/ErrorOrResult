@@ -46,12 +46,12 @@ using ErrorOrResult;
 var successResult = Result<int>.Success(42);
 
 // Error result with single error
-var errorResult = Result<int>.Error(
+var errorResult = Result<int>.Failure(
     Error.NotFound("User.NotFound", "User not found")
 );
 
 // Error result with multiple errors
-var multiErrorResult = Result<User>.Error(
+var multiErrorResult = Result<User>.Failure(
     Error.Validation("User.Name", "Name is required"),
     Error.Validation("User.Email", "Email is invalid")
 );
@@ -75,7 +75,7 @@ else
 ```csharp
 var message = result.Match(
     onSuccess: value => $"Success: {value}",
-    onError: errors => $"Failed: {errors.FirstError.Description}"
+    onFailure: errors => $"Failed: {errors.FirstError.Description}"
 );
 ```
 
@@ -162,34 +162,101 @@ var result = await GetUserAsync(id)
     .BindAsync(user => SendEmailAsync(user.Email));
 ```
 
-### LINQ-Style Queries
+### LINQ Query Syntax
 
 ```csharp
-var results = new[]
-{
-    Result<int>.Success(1),
-    Result<int>.Error(Error.NotFound()),
-    Result<int>.Success(3)
-};
+// Using LINQ query syntax with results
+var result = from user in GetUser(userId)
+             from email in ValidateEmail(user.Email)
+             select email.ToLower();
 
-// Get only successful results
-var successfulValues = results.SuccessValues(); // [1, 3]
-
-// Get only errors
-var errors = results.Errors(); // [Error.NotFound()]
+// Chaining multiple operations
+var processedResult = 
+    from user in GetUser(userId)
+    from validation in ValidateUser(user)
+    from saved in SaveUser(user)
+    select saved;
 ```
 
-### Error Info Builder
+### Multiple Errors
 
-Build complex error information:
+Create results with multiple errors:
 
 ```csharp
-var errorInfo = ErrorInfo.Builder()
-    .Add(Error.Validation("Name", "Name is required"))
-    .Add(Error.Validation("Email", "Email is invalid"))
-    .Build();
+// Using array of errors
+var errors = new[]
+{
+    Error.Validation("Name", "Name is required"),
+    Error.Validation("Email", "Email is invalid")
+};
 
-var result = Result<User>.Error(errorInfo);
+var result = Result<User>.Failure(errors);
+
+// Or using ErrorInfo directly
+var errorInfo = new ErrorInfo(new[]
+{
+    Error.Validation("Name", "Name is required"),
+    Error.Validation("Email", "Email is invalid")
+});
+
+var result = Result<User>.Failure(errorInfo);
+```
+
+## Requirements
+
+- .NET 10.0 or higher
+- C# 12.0 or higher (for record structs and nullable reference types)
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Author
+
+**vlasta81**
+
+## Support
+
+If you encounter any issues or have questions, please file an issue on the [GitHub repository](https://github.com/vlasta81/ErrorOrResult/issues).
+
+### LINQ Query Syntax
+
+```csharp
+// Using LINQ query syntax with results
+var result = from user in GetUser(userId)
+             from email in ValidateEmail(user.Email)
+             select email.ToLower();
+
+// Chaining multiple operations
+var processedResult = 
+    from user in GetUser(userId)
+    from validation in ValidateUser(user)
+    from saved in SaveUser(user)
+    select saved;
+```
+
+### Multiple Errors
+
+Create results with multiple errors:
+
+```csharp
+// Using array of errors
+var errors = new[]
+{
+    Error.Validation("Name", "Name is required"),
+    Error.Validation("Email", "Email is invalid")
+};
+
+var result = Result<User>.Failure(errors);
+
+// Or using ErrorInfo directly
+var errorInfo = new ErrorInfo(new[]
+{
+    Error.Validation("Name", "Name is required"),
+    Error.Validation("Email", "Email is invalid")
+});
+
+var result = Result<User>.Failure(errorInfo);
 ```
 
 ## Requirements

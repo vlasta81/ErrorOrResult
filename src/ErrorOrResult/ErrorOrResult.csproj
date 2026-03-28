@@ -12,6 +12,7 @@
 		<Version>1.0.2</Version>
 		<Authors>vlasta81</Authors>
 		<Company>vlasta81</Company>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Product>ErrorOrResult</Product>
 		<Description>A functional approach to error handling: Return Result&lt;T&gt; or Error - no exceptions, just clean, composable operations</Description>
 		<PackageTags>result;error;error-handling;functional;railway;either;result-pattern;no-exceptions</PackageTags>

@@ -128,6 +128,166 @@ namespace ErrorOrResult
         /// </summary>
         /// <returns>A string describing the result state and value or error.</returns>
         public override string ToString() => !IsSuccess && !IsError ? "Uninitialized Result!" : IsSuccess ? $"Success: {_value}" : $"Failure: {_errorInfo}";
+
+        /// <summary>
+        /// Maps the success value of a result to a new value using the specified selector function.
+        /// If the result is in error state, the error is propagated.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the output result value.</typeparam>
+        /// <param name="selector">The function to apply to the success value.</param>
+        /// <returns>A result containing the mapped value or the original error.</returns>
+        /// <exception cref="InvalidOperationException">Thrown when the result is uninitialized.</exception>
+        public Result<TResult> Map<TResult>(Func<TOutput, TResult> selector)
+        {
+            if (!IsSuccess && !IsError)
+            {
+                throw new InvalidOperationException("Cannot map uninitialized Result!");
+            }
+            return IsSuccess ? Result.Success(selector(_value!)) : Result.Failure<TResult>(_errorInfo!.Value);
+        }
+
+        /// <summary>
+        /// Chains a result with another operation that returns a result (flatMap/bind operation).
+        /// If the first result is in error state, the error is propagated without executing the binder.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the output result value.</typeparam>
+        /// <param name="binder">The function that takes the success value and returns a new result.</param>
+        /// <returns>The result returned by the binder or the original error.</returns>
+        /// <exception cref="InvalidOperationException">Thrown when the result is uninitialized.</exception>
+        public Result<TResult> Bind<TResult>(Func<TOutput, Result<TResult>> binder)
+        {
+            if (!IsSuccess && !IsError)
+            {
+                throw new InvalidOperationException("Cannot bind uninitialized Result!");
+            }
+            return IsSuccess ? binder(_value!) : Result.Failure<TResult>(_errorInfo!.Value);
+        }
+
+        /// <summary>
+        /// Pattern matches on the result, executing one of two functions based on success or error state.
+        /// </summary>
+        /// <typeparam name="TResult">The type of the return value.</typeparam>
+        /// <param name="onSuccess">The function to execute if the result is successful.</param>
+        /// <param name="onFailure">The function to execute if the result is in error state.</param>
+        /// <returns>The value returned by either onSuccess or onFailure.</returns>
+        public TResult Match<TResult>(Func<TOutput, TResult> onSuccess, Func<ErrorInfo, TResult> onFailure) => IsSuccess ? onSuccess(_value!) : onFailure(_errorInfo!.Value);
+
+        /// <summary>
+        /// Executes a side-effect action on the success value without modifying the result.
+        /// Useful for logging or other side effects.
+        /// </summary>
+        /// <param name="action">The action to execute on the success value.</param>
+        /// <returns>The original result unchanged.</returns>
+        public Result<TOutput> Tap(Action<TOutput> action)
+        {
+            if (IsSuccess)
+            {
+                action(_value!);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Executes a side-effect action on the error information without modifying the result.
+        /// Useful for logging errors.
+        /// </summary>
+        /// <param name="action">The action to execute on the error information.</param>
+        /// <returns>The original result unchanged.</returns>
+        public Result<TOutput> TapError(Action<ErrorInfo> action)
+        {
+            if (IsError)
+            {
+                action(_errorInfo!.Value);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Validates the success value using a predicate. If the predicate fails, converts to an error result.
+        /// </summary>
+        /// <param name="predicate">The predicate to test the success value against.</param>
+        /// <param name="error">The error to use if the predicate fails.</param>
+        /// <returns>The original result if successful and predicate passes, otherwise a failed result.</returns>
+        public Result<TOutput> Ensure(Func<TOutput, bool> predicate, Error error)
+        {
+            if (IsSuccess && !predicate(_value!))
+            {
+                return Result.Failure<TOutput>(error);
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// Transforms all errors in a result using the specified mapper function.
+        /// </summary>
+        /// <param name="mapper">The function to transform each error.</param>
+        /// <returns>The original result if successful, otherwise a result with transformed errors.</returns>
+        public Result<TOutput> MapError(Func<Error, Error> mapper)
+        {
+            if (!IsError)
+            {
+                return this;
+            }
+            ErrorInfo errorInfo = _errorInfo!.Value;
+            if (errorInfo.Count == 1)
+            {
+                return Result.Failure<TOutput>(mapper(errorInfo.FirstError));
+            }
+            return Result.Failure<TOutput>(errorInfo.AllErrors.Select(mapper).ToArray());
+        }
+
+        /// <summary>
+        /// Executes one of two actions based on whether the result is successful or in error state.
+        /// Similar to Match but returns void.
+        /// </summary>
+        /// <param name="onSuccess">The action to execute if the result is successful.</param>
+        /// <param name="onFailure">The action to execute if the result is in error state.</param>
+        public void Switch(Action<TOutput> onSuccess, Action<ErrorInfo> onFailure)
+        {
+            if (IsSuccess)
+            {
+                onSuccess(_value!);
+            }
+            else
+            {
+                onFailure(_errorInfo!.Value);
+            }
+        }
+
+        /// <summary>
+        /// Throws an exception if the result is in error state, otherwise returns the success value.
+        /// </summary>
+        /// <returns>The success value if the result is successful.</returns>
+        /// <exception cref="InvalidOperationException">Thrown when the result is in error state.</exception>
+        [StackTraceHidden]
+        public TOutput ThrowOnError()
+        {
+            if (IsError)
+            {
+                Error error = _errorInfo!.Value.FirstError;
+                throw new InvalidOperationException($"Error: {error.Code} - {error.Description}");
+            }
+            return _value!;
+        }
+
+        /// <summary>
+        /// Combines this result with another result into a single result containing a tuple of both values.
+        /// If either result is in error state, all errors are combined.
+        /// </summary>
+        /// <typeparam name="TOther">The type of the other result value.</typeparam>
+        /// <param name="other">The other result to combine with.</param>
+        /// <returns>A result containing a tuple of both values if both are successful, otherwise a combined error result.</returns>
+        public Result<(TOutput, TOther)> Combine<TOther>(Result<TOther> other)
+        {
+            if (IsSuccess && other.IsSuccess)
+            {
+                return Result.Success((_value!, other._value!));
+            }
+            var errors = ImmutableArray.CreateBuilder<Error>();
+            if (IsError) errors.AddRange(_errorInfo!.Value.AllErrors);
+            if (other.IsError) errors.AddRange(other._errorInfo!.Value.AllErrors);
+            return Result.Failure<(TOutput, TOther)>(errors.ToArray());
+        }
     }
 
     /// <summary>

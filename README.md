@@ -21,6 +21,8 @@ A lightweight, functional .NET library for handling operation results with expli
 
 [Documentation](https://github.com/vlasta81/ErrorOrResult/blob/master/docs/api-generated/index.md)
 
+> **Note**: API documentation is auto-generated using [DefaultDocumentation](https://github.com/Doraku/DefaultDocumentation). After making code changes, run `GenerateDefaultDocumentation.bat` to update the documentation files in the `docs/api-generated` folder.
+
 ## Installation
 
 Install via NuGet Package Manager:
@@ -83,9 +85,9 @@ var message = result.Match(
 
 ```csharp
 var result = GetUser(userId)
-    .Map(user => user.Email)
+    .Map(user => user.Email)           // Instance method - maps success value
     .Map(email => email.ToLower())
-    .Bind(email => SendNotification(email));
+    .Bind(email => SendNotification(email));  // Instance method - chains result-returning operations
 ```
 
 ## Error Types
@@ -117,7 +119,7 @@ var customError = new Error("Custom.Code", "Custom description", ErrorType.Confl
 
 ## ASP.NET Core Integration
 
-Convert results directly to HTTP responses:
+Convert results directly to HTTP responses using extension methods:
 
 ```csharp
 using ErrorOrResult;
@@ -130,14 +132,15 @@ public class UsersController : ControllerBase
     public async Task<IActionResult> GetUser(int id)
     {
         var result = await _userService.GetUserByIdAsync(id);
-        return result.ToActionResult(user => Ok(user));
+        // Use ToHttpResult extension method for automatic HTTP response conversion
+        return result.ToHttpResult(user => Ok(user));
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateUser(CreateUserRequest request)
     {
         var result = await _userService.CreateUserAsync(request);
-        return result.ToActionResult(user => CreatedAtAction(
+        return result.ToHttpResult(user => CreatedAtAction(
             nameof(GetUser), 
             new { id = user.Id }, 
             user
@@ -153,13 +156,16 @@ public class UsersController : ControllerBase
 ```csharp
 Task<Result<User>> GetUserAsync(int id);
 
-// Map async
+// MapAsync - extension method for Task<Result<T>>
 var emailResult = await GetUserAsync(id)
     .MapAsync(user => user.Email);
 
-// Bind async
+// BindAsync - extension method for Task<Result<T>>
 var result = await GetUserAsync(id)
     .BindAsync(user => SendEmailAsync(user.Email));
+
+// Note: For synchronous Result<T> operations, use instance methods:
+// result.Map(...), result.Bind(...), result.Match(...), etc.
 ```
 
 ### LINQ Query Syntax
@@ -206,6 +212,30 @@ var result = Result<User>.Failure(errorInfo);
 
 - .NET 10.0 or higher
 - C# 12.0 or higher (for record structs and nullable reference types)
+
+## API Design Notes
+
+### Instance Methods vs Extension Methods
+
+This library uses a hybrid approach for method organization:
+
+**Instance Methods** (called directly on `Result<T>`):
+- `Map<TResult>(...)` - Transform success value
+- `Bind<TResult>(...)` - Chain result-returning operations  
+- `Match<TResult>(...)` - Pattern matching on result state
+- `Tap(...)`, `TapError(...)` - Execute side effects
+- `Ensure(...)` - Validate with predicate
+- `MapError(...)` - Transform errors
+- `Switch(...)` - Execute actions based on state
+- `ThrowOnError()` - Throw exception if error state
+- `Combine<TOther>(Result<TOther>)` - Combine with another result into tuple
+- `WithDescription(...)` - On `Error` struct, create modified copy
+
+**Extension Methods** (for async operations and special cases):
+- `MapAsync`, `BindAsync`, `MatchAsync`, `TapAsync`, `EnsureAsync`, `ThrowOnErrorAsync` - Async variants for `Task<Result<T>>` (cannot be instance methods because they operate on `Task<Result<T>>`, not `Result<T>` itself - following standard .NET pattern like LINQ's `ToListAsync()`)
+- `ResultHttpExtensions.*` - ASP.NET Core HTTP response conversion
+- `ResultLinqExtensions.*` - LINQ query syntax support (`Select`, `SelectMany`)
+- `TaskExtensions.*` - Convert `Task<T>` to `Result<T>`
 
 ## License
 

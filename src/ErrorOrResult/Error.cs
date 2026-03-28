@@ -99,6 +99,13 @@ namespace ErrorOrResult
             description = Description;
             type = Type;
         }
+
+        /// <summary>
+        /// Creates a new error with the specified description, keeping the original code and type.
+        /// </summary>
+        /// <param name="newDescription">The new description to apply to the error.</param>
+        /// <returns>A new <see cref="Error"/> with the updated description.</returns>
+        public readonly Error WithDescription(string newDescription) => this with { Description = newDescription };
     }
 
 }

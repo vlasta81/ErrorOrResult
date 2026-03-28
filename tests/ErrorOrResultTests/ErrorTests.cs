@@ -146,4 +146,37 @@ public class ErrorTests
         Assert.Equal(error1, error2);
         Assert.NotEqual(error1, error3);
     }
+
+    [Fact]
+    public void Error_WithDescription_ShouldCreateNewErrorWithUpdatedDescription()
+    {
+        var originalError = Error.Validation("Test.Code", "Original description");
+
+        var modifiedError = originalError.WithDescription("New description");
+
+        // Original error should be unchanged (record struct immutability)
+        Assert.Equal("Test.Code", originalError.Code);
+        Assert.Equal("Original description", originalError.Description);
+        Assert.Equal(ErrorType.Validation, originalError.Type);
+
+        // New error should have updated description but same code and type
+        Assert.Equal("Test.Code", modifiedError.Code);
+        Assert.Equal("New description", modifiedError.Description);
+        Assert.Equal(ErrorType.Validation, modifiedError.Type);
+
+        // Errors should not be equal since description differs
+        Assert.NotEqual(originalError, modifiedError);
+    }
+
+    [Fact]
+    public void Error_WithDescription_CanBeChained()
+    {
+        var error = Error.NotFound()
+            .WithDescription("First update")
+            .WithDescription("Second update");
+
+        Assert.Equal("General.NotFound", error.Code);
+        Assert.Equal("Second update", error.Description);
+        Assert.Equal(ErrorType.NotFound, error.Type);
+    }
 }

@@ -1,11 +1,11 @@
 # ErrorOrResult
 
-[CZECH](https://github.com/vlasta81/ErrorOrResult/blob/master/README_CZ.md)
-
 [![NuGet](https://img.shields.io/nuget/v/ErrorOrResult.svg)](https://www.nuget.org/packages/ErrorOrResult/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A lightweight, functional .NET library for handling operation results with explicit success and error states. Inspired by the Result pattern, this library helps you write more robust and maintainable code by making error handling explicit and type-safe.
+
+> **✨ What's New in v1.0.2**: Core functional methods (`Map`, `Bind`, `Match`, `Combine`, etc.) have been moved from extension classes to **instance methods** on `Result<T>` for better IntelliSense support and API discoverability. Async methods remain as extension methods. See [API Design Notes](#api-design-notes) or [CHANGELOG.md](CHANGELOG.md#migration-guide) for details.
 
 ## Features
 

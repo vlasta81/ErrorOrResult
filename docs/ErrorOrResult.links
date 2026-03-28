@@ -14,10 +14,9 @@ M:ErrorOrResult.Error.Forbidden(System.String,System.String)|Error.Forbidden.HFV
 M:ErrorOrResult.Error.BadRequest(System.String,System.String)|Error.BadRequest.2S15IPC1T1XA7FBM51ABBL3YE.md|BadRequest(string, string)
 M:ErrorOrResult.Error.Custom(System.String,System.String,ErrorOrResult.ErrorType)|Error.Custom.Y4HXL9GT85UIW79MIIO6BIJ2D.md|Custom(string, string, ErrorType)
 M:ErrorOrResult.Error.Deconstruct(System.String@,System.String@,ErrorOrResult.ErrorType@)|Error.Deconstruct.Z90LW8QLDL9WITBJFPPSN2SC6.md|Deconstruct(string, string, ErrorType)
+M:ErrorOrResult.Error.WithDescription(System.String)|Error.WithDescription.EH9TE395ANNXXQ7TSINBKRB5D.md|WithDescription(string)
 N:ErrorOrResult|ErrorOrResult.md|ErrorOrResult
 T:ErrorOrResult.Error|Error.md|Error
-M:ErrorOrResult.ErrorExtensions.WithDescription(ErrorOrResult.Error,System.String)|ErrorExtensions.WithDescription.WFRR9U8TFG5BDHRZ2R1NCAIQB.md|WithDescription(this Error, string)
-T:ErrorOrResult.ErrorExtensions|ErrorExtensions.md|ErrorExtensions
 P:ErrorOrResult.ErrorInfo.FirstError|ErrorInfo.FirstError.md|FirstError
 P:ErrorOrResult.ErrorInfo.AllErrors|ErrorInfo.AllErrors.md|AllErrors
 P:ErrorOrResult.ErrorInfo.Count|ErrorInfo.Count.md|Count
@@ -54,6 +53,16 @@ M:ErrorOrResult.Result`1.op_Implicit(ErrorOrResult.ErrorInfo)~ErrorOrResult.Resu
 M:ErrorOrResult.Result`1.GetValueOrDefault(`0)|Result_TOutput_.GetValueOrDefault.FGWX88S1XHXFBID4HALMYW41A.md|GetValueOrDefault(TOutput)
 M:ErrorOrResult.Result`1.GetValueOrThrow|Result_TOutput_.GetValueOrThrow().md|GetValueOrThrow()
 M:ErrorOrResult.Result`1.ToString|Result_TOutput_.ToString().md|ToString()
+M:ErrorOrResult.Result`1.Map``1(System.Func{`0,``0})|Result_TOutput_.Map.F8O6RAW33TJ1Q4SER87CLGRB3.md|Map<TResult>(Func<TOutput,TResult>)
+M:ErrorOrResult.Result`1.Bind``1(System.Func{`0,ErrorOrResult.Result{``0}})|Result_TOutput_.Bind.N8RZNUZ5VSZM0NWXH9RH8X4L3.md|Bind<TResult>(Func<TOutput,Result<TResult>>)
+M:ErrorOrResult.Result`1.Match``1(System.Func{`0,``0},System.Func{ErrorOrResult.ErrorInfo,``0})|Result_TOutput_.Match.LG1M686TC91EMIGPTSFLUPDD2.md|Match<TResult>(Func<TOutput,TResult>, Func<ErrorInfo,TResult>)
+M:ErrorOrResult.Result`1.Tap(System.Action{`0})|Result_TOutput_.Tap.BNS6NMERZGIR64EOHSODSDNH2.md|Tap(Action<TOutput>)
+M:ErrorOrResult.Result`1.TapError(System.Action{ErrorOrResult.ErrorInfo})|Result_TOutput_.TapError.T02L1CYEGSTZX1JU5M15O38AB.md|TapError(Action<ErrorInfo>)
+M:ErrorOrResult.Result`1.Ensure(System.Func{`0,System.Boolean},ErrorOrResult.Error)|Result_TOutput_.Ensure.07AQBXP35EM7WBLPUILNR38G6.md|Ensure(Func<TOutput,bool>, Error)
+M:ErrorOrResult.Result`1.MapError(System.Func{ErrorOrResult.Error,ErrorOrResult.Error})|Result_TOutput_.MapError.QDN2J1O29ZE5MOF94KU2FY0XA.md|MapError(Func<Error,Error>)
+M:ErrorOrResult.Result`1.Switch(System.Action{`0},System.Action{ErrorOrResult.ErrorInfo})|Result_TOutput_.Switch.2QF0XVVXYOCRF9L31O3D2POB3.md|Switch(Action<TOutput>, Action<ErrorInfo>)
+M:ErrorOrResult.Result`1.ThrowOnError|Result_TOutput_.ThrowOnError().md|ThrowOnError()
+M:ErrorOrResult.Result`1.Combine``1(ErrorOrResult.Result{``0})|Result_TOutput_.Combine.KHJMMOA058HTTE1VHM3AYNIY8.md|Combine<TOther>(Result<TOther>)
 T:ErrorOrResult.Result`1|Result_TOutput_.md|Result<TOutput>
 M:ErrorOrResult.Result.Success|Result.Success.md#ErrorOrResult.Result.Success()|Success()
 M:ErrorOrResult.Result.Success``1(``0)|Result.Success.md#ErrorOrResult.Result.Success_TOutput_(TOutput)|Success<TOutput>(TOutput)
@@ -73,21 +82,11 @@ M:ErrorOrResult.Result.Ensure``1(``0,System.Func{``0,System.Boolean},ErrorOrResu
 M:ErrorOrResult.Result.Of``1(System.Func{ErrorOrResult.Result{``0}})|Result.Of.6OZR9VPKH8BG1OOM1EUMXSR0D.md|Of<TOutput>(Func<Result<TOutput>>)
 M:ErrorOrResult.Result.OfAsync``1(System.Func{System.Threading.Tasks.Task{ErrorOrResult.Result{``0}}})|Result.OfAsync.TUOJ8BIIOHNLTOZ2EFPL9DNIC.md|OfAsync<TOutput>(Func<Task<Result<TOutput>>>)
 T:ErrorOrResult.Result|Result.md|Result
-M:ErrorOrResult.ResultExtensions.Map``2(ErrorOrResult.Result{``0},System.Func{``0,``1})|ResultExtensions.Map.BJHXT2CPKH205HWCT9GQ6VEM8.md|Map<TInput,TOutput>(this Result<TInput>, Func<TInput,TOutput>)
 M:ErrorOrResult.ResultExtensions.MapAsync``2(System.Threading.Tasks.Task{ErrorOrResult.Result{``0}},System.Func{``0,``1})|ResultExtensions.MapAsync.7C12ZWE16JV9YIEKL9FCSZMK5.md|MapAsync<TInput,TOutput>(this Task<Result<TInput>>, Func<TInput,TOutput>)
-M:ErrorOrResult.ResultExtensions.Bind``2(ErrorOrResult.Result{``0},System.Func{``0,ErrorOrResult.Result{``1}})|ResultExtensions.Bind.62TML868BKDZRMZDA6MLED8WE.md|Bind<TInput,TOutput>(this Result<TInput>, Func<TInput,Result<TOutput>>)
 M:ErrorOrResult.ResultExtensions.BindAsync``2(System.Threading.Tasks.Task{ErrorOrResult.Result{``0}},System.Func{``0,System.Threading.Tasks.Task{ErrorOrResult.Result{``1}}})|ResultExtensions.BindAsync.9XXYYKAPIOKS6HVFZ4G6XC2H1.md|BindAsync<TInput,TOutput>(this Task<Result<TInput>>, Func<TInput,Task<Result<TOutput>>>)
-M:ErrorOrResult.ResultExtensions.Match``2(ErrorOrResult.Result{``0},System.Func{``0,``1},System.Func{ErrorOrResult.ErrorInfo,``1})|ResultExtensions.Match.AKZA3GBW5SXVQ4JBA2EFPRDQ.md|Match<TInput,TOutput>(this Result<TInput>, Func<TInput,TOutput>, Func<ErrorInfo,TOutput>)
 M:ErrorOrResult.ResultExtensions.MatchAsync``2(System.Threading.Tasks.Task{ErrorOrResult.Result{``0}},System.Func{``0,``1},System.Func{ErrorOrResult.ErrorInfo,``1})|ResultExtensions.MatchAsync.TA88DFDTBKY4ZV0BHVJAWPPF6.md|MatchAsync<TInput,TOutput>(this Task<Result<TInput>>, Func<TInput,TOutput>, Func<ErrorInfo,TOutput>)
-M:ErrorOrResult.ResultExtensions.Tap``1(ErrorOrResult.Result{``0},System.Action{``0})|ResultExtensions.Tap.TQHYW55JPJQAOFUKRV6GY1SGB.md|Tap<TOutput>(this Result<TOutput>, Action<TOutput>)
 M:ErrorOrResult.ResultExtensions.TapAsync``1(System.Threading.Tasks.Task{ErrorOrResult.Result{``0}},System.Func{``0,System.Threading.Tasks.Task})|ResultExtensions.TapAsync.V8KT2PF87U7VYS82MBE3YMNHE.md|TapAsync<TOutput>(this Task<Result<TOutput>>, Func<TOutput,Task>)
-M:ErrorOrResult.ResultExtensions.TapError``1(ErrorOrResult.Result{``0},System.Action{ErrorOrResult.ErrorInfo})|ResultExtensions.TapError.MWH05R2LSGULNUD3OO4V3K1W5.md|TapError<TOutput>(this Result<TOutput>, Action<ErrorInfo>)
-M:ErrorOrResult.ResultExtensions.Ensure``1(ErrorOrResult.Result{``0},System.Func{``0,System.Boolean},ErrorOrResult.Error)|ResultExtensions.Ensure.1DPFLR10ZITUO9FVMQWNBC96.md|Ensure<TOutput>(this Result<TOutput>, Func<TOutput,bool>, Error)
 M:ErrorOrResult.ResultExtensions.EnsureAsync``1(System.Threading.Tasks.Task{ErrorOrResult.Result{``0}},System.Func{``0,System.Boolean},ErrorOrResult.Error)|ResultExtensions.EnsureAsync.CMOWCSPCH8DG8TLAV4NY6IHH2.md|EnsureAsync<TOutput>(this Task<Result<TOutput>>, Func<TOutput,bool>, Error)
-M:ErrorOrResult.ResultExtensions.MapError``1(ErrorOrResult.Result{``0},System.Func{ErrorOrResult.Error,ErrorOrResult.Error})|ResultExtensions.MapError.2EQCKB8VLKYZBG88FO8JNHSMA.md|MapError<TOutput>(this Result<TOutput>, Func<Error,Error>)
-M:ErrorOrResult.ResultExtensions.Combine``2(ErrorOrResult.Result{``0},ErrorOrResult.Result{``1})|ResultExtensions.Combine.OFXWJ1B4R343I335DG42MGCB9.md|Combine<TOutput1,TOutput2>(this Result<TOutput1>, Result<TOutput2>)
-M:ErrorOrResult.ResultExtensions.Switch``1(ErrorOrResult.Result{``0},System.Action{``0},System.Action{ErrorOrResult.ErrorInfo})|ResultExtensions.Switch.I0Z8VPK7G4EMGYZ2DJIAYPMC2.md|Switch<TOutput>(this Result<TOutput>, Action<TOutput>, Action<ErrorInfo>)
-M:ErrorOrResult.ResultExtensions.ThrowOnError``1(ErrorOrResult.Result{``0})|ResultExtensions.ThrowOnError.RKOPO0DQVV82KIP9XAEFVZRR5.md|ThrowOnError<TOutput>(this Result<TOutput>)
 M:ErrorOrResult.ResultExtensions.ThrowOnErrorAsync``1(System.Threading.Tasks.Task{ErrorOrResult.Result{``0}})|ResultExtensions.ThrowOnErrorAsync.N2BT5J95XF2E2H7IUIF38K6G1.md|ThrowOnErrorAsync<TOutput>(this Task<Result<TOutput>>)
 T:ErrorOrResult.ResultExtensions|ResultExtensions.md|ResultExtensions
 M:ErrorOrResult.ResultHttpExtensions.ToHttpResult``1(ErrorOrResult.Result{``0},System.Func{``0,Microsoft.AspNetCore.Http.IResult})|ResultHttpExtensions.ToHttpResult.md#ErrorOrResult.ResultHttpExtensions.ToHttpResult_TOutput_(thisErrorOrResult.Result_TOutput_,System.Func_TOutput,Microsoft.AspNetCore.Http.IResult_)|ToHttpResult<TOutput>(this Result<TOutput>, Func<TOutput,IResult>)

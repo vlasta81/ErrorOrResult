@@ -78,7 +78,8 @@ public class ResultExtensionsTests
         var result = Result.Success(10);
         var error = Error.Validation("Bind.Error", "Binder failed");
 
-        var bound = result.Bind<int, int>(x => error);
+        // Note: Bind is now an instance method, so only specify output type parameter
+        var bound = result.Bind<int>(x => error);
 
         Assert.True(bound.IsError);
         Assert.Equal(error, bound.Error);
@@ -91,7 +92,8 @@ public class ResultExtensionsTests
         var result = Result.Failure<int>(error);
         bool binderExecuted = false;
 
-        var bound = result.Bind<int, int>(x =>
+        // Note: Bind is now an instance method, so only specify output type parameter
+        var bound = result.Bind<int>(x =>
         {
             binderExecuted = true;
             return Result.Success(x * 2);

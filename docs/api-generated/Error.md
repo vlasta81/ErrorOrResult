@@ -31,3 +31,4 @@ Implements [System\.IEquatable&lt;](https://learn.microsoft.com/en-us/dotnet/api
 | [Unauthorized\(string, string\)](Error.Unauthorized.NKJ5AVODII3HUF1R89G3VZG0A.md 'ErrorOrResult\.Error\.Unauthorized\(string, string\)') | Creates an unauthorized error\. |
 | [Unexpected\(string, string\)](Error.Unexpected.36VQZYFHCWIA1MMVXWVM6A3QB.md 'ErrorOrResult\.Error\.Unexpected\(string, string\)') | Creates an unexpected error\. |
 | [Validation\(string, string\)](Error.Validation.4WXO4A65VYKB2LLCOF2XPM5U.md 'ErrorOrResult\.Error\.Validation\(string, string\)') | Creates a validation error\. |
+| [WithDescription\(string\)](Error.WithDescription.EH9TE395ANNXXQ7TSINBKRB5D.md 'ErrorOrResult\.Error\.WithDescription\(string\)') | Creates a new error with the specified description, keeping the original code and type\. |

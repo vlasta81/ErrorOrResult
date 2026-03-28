@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Quick Navigation
+
+- [Latest: v1.0.2](#102---2026-03-29) – Major refactoring: instance methods
+- [Migration Guide](#migration-guide) – Upgrading from v1.0.1
+- [Previous: v1.0.1](#101---previous-release) – Initial stable release
+
+---
+
 ## [1.0.2] - 2026-03-29
 
 ### Changed
@@ -14,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Breaking**: Moved `Error.WithDescription(...)` from `ErrorExtensions` to `Error` record struct as an instance method
 - Renamed `ResultExtensions` class to focus only on async extension methods for `Task<Result<T>>`
 - Updated XML documentation comments throughout the codebase for clarity and consistency
+- **Test Updates**: Updated test files to reflect new method signatures (reduced explicit generic type parameters where type inference handles them)
 
 ### Added
 
@@ -26,6 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `ErrorExtensions.cs` file (functionality moved to `Error` struct)
 - Redundant synchronous extension methods from `ResultExtensions.cs` (moved to `Result<TOutput>` struct)
+
+### Added (Tests)
+
+- New test cases for `Error.WithDescription()` instance method in `ErrorTests.cs`
+- Verification that all existing tests pass with refactored method locations
 
 ### Fixed
 
@@ -75,3 +89,7 @@ var result = await GetUserAsync(1)
 - ASP.NET Core HTTP response integration
 - LINQ query syntax support
 - Full async/await support
+
+---
+
+> **Adding New Entries**: When adding future changelog entries, follow the [Keep a Changelog](https://keepachangelog.com/) format and place new versions at the top of this file under the "Unreleased" or next version section.

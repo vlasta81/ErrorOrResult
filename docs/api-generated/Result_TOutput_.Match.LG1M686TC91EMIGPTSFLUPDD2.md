@@ -29,3 +29,8 @@ The function to execute if the result is in error state\.
 #### Returns
 [TResult](Result_TOutput_.Match.LG1M686TC91EMIGPTSFLUPDD2.md#ErrorOrResult.Result_TOutput_.Match_TResult_(System.Func_TOutput,TResult_,System.Func_ErrorOrResult.ErrorInfo,TResult_).TResult 'ErrorOrResult\.Result\<TOutput\>\.Match\<TResult\>\(System\.Func\<TOutput,TResult\>, System\.Func\<ErrorOrResult\.ErrorInfo,TResult\>\)\.TResult')  
 The value returned by either onSuccess or onFailure\.
+
+#### Exceptions
+
+[System\.InvalidOperationException](https://learn.microsoft.com/en-us/dotnet/api/system.invalidoperationexception 'System\.InvalidOperationException')  
+Thrown when the result is uninitialized\.

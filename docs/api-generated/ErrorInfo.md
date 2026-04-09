@@ -14,6 +14,7 @@ Implements [System\.IEquatable&lt;](https://learn.microsoft.com/en-us/dotnet/api
 | [ErrorInfo\(Error\)](ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(ErrorOrResult.Error) 'ErrorOrResult\.ErrorInfo\.ErrorInfo\(ErrorOrResult\.Error\)') | Initializes a new instance of [ErrorInfo](ErrorInfo.md 'ErrorOrResult\.ErrorInfo') with a single error\. |
 | [ErrorInfo\(Error\[\]\)](ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(ErrorOrResult.Error[]) 'ErrorOrResult\.ErrorInfo\.ErrorInfo\(ErrorOrResult\.Error\[\]\)') | Initializes a new instance of [ErrorInfo](ErrorInfo.md 'ErrorOrResult\.ErrorInfo') with an array of errors\. |
 | [ErrorInfo\(List&lt;Error&gt;\)](ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(System.Collections.Generic.List_ErrorOrResult.Error_) 'ErrorOrResult\.ErrorInfo\.ErrorInfo\(System\.Collections\.Generic\.List\<ErrorOrResult\.Error\>\)') | Initializes a new instance of [ErrorInfo](ErrorInfo.md 'ErrorOrResult\.ErrorInfo') with a list of errors\. |
+| [ErrorInfo\(ReadOnlySpan&lt;Error&gt;\)](ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(System.ReadOnlySpan_ErrorOrResult.Error_) 'ErrorOrResult\.ErrorInfo\.ErrorInfo\(System\.ReadOnlySpan\<ErrorOrResult\.Error\>\)') | Initializes a new instance of [ErrorInfo](ErrorInfo.md 'ErrorOrResult\.ErrorInfo') with a span of errors\. |
 
 | Properties | |
 | :--- | :--- |

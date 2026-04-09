@@ -23,6 +23,7 @@ P:ErrorOrResult.ErrorInfo.Count|ErrorInfo.Count.md|Count
 M:ErrorOrResult.ErrorInfo.#ctor(ErrorOrResult.Error)|ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(ErrorOrResult.Error)|ErrorInfo(Error)
 M:ErrorOrResult.ErrorInfo.#ctor(ErrorOrResult.Error[])|ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(ErrorOrResult.Error[])|ErrorInfo(Error[])
 M:ErrorOrResult.ErrorInfo.#ctor(System.Collections.Generic.List{ErrorOrResult.Error})|ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(System.Collections.Generic.List_ErrorOrResult.Error_)|ErrorInfo(List<Error>)
+M:ErrorOrResult.ErrorInfo.#ctor(System.ReadOnlySpan{ErrorOrResult.Error})|ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(System.ReadOnlySpan_ErrorOrResult.Error_)|ErrorInfo(ReadOnlySpan<Error>)
 M:ErrorOrResult.ErrorInfo.op_Implicit(ErrorOrResult.Error)~ErrorOrResult.ErrorInfo|ErrorInfo.op_Implicit.P2AEI6JVK573GO7SQV7M46LM1.md|implicit operator ErrorInfo(Error)
 M:ErrorOrResult.ErrorInfo.op_Implicit(ErrorOrResult.Error[])~ErrorOrResult.ErrorInfo|ErrorInfo.op_Implicit.JVG3DKXTU88AS9B6QAFCRTNNC.md|implicit operator ErrorInfo(Error[])
 M:ErrorOrResult.ErrorInfo.op_Implicit(System.Collections.Generic.List{ErrorOrResult.Error})~ErrorOrResult.ErrorInfo|ErrorInfo.op_Implicit.K3T0KLS9217KPX3ABVW3S2FO3.md|implicit operator ErrorInfo(List<Error>)

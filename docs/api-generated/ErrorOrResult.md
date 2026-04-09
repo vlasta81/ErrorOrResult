@@ -67,6 +67,7 @@
   - **[ErrorInfo\(Error\)](ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(ErrorOrResult.Error) 'ErrorOrResult\.ErrorInfo\.ErrorInfo\(ErrorOrResult\.Error\)')**
   - **[ErrorInfo\(Error\[\]\)](ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(ErrorOrResult.Error[]) 'ErrorOrResult\.ErrorInfo\.ErrorInfo\(ErrorOrResult\.Error\[\]\)')**
   - **[ErrorInfo\(List&lt;Error&gt;\)](ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(System.Collections.Generic.List_ErrorOrResult.Error_) 'ErrorOrResult\.ErrorInfo\.ErrorInfo\(System\.Collections\.Generic\.List\<ErrorOrResult\.Error\>\)')**
+  - **[ErrorInfo\(ReadOnlySpan&lt;Error&gt;\)](ErrorInfo.ErrorInfo.md#ErrorOrResult.ErrorInfo.ErrorInfo(System.ReadOnlySpan_ErrorOrResult.Error_) 'ErrorOrResult\.ErrorInfo\.ErrorInfo\(System\.ReadOnlySpan\<ErrorOrResult\.Error\>\)')**
   - **[AllErrors](ErrorInfo.AllErrors.md 'ErrorOrResult\.ErrorInfo\.AllErrors')**
   - **[Count](ErrorInfo.Count.md 'ErrorOrResult\.ErrorInfo\.Count')**
   - **[FirstError](ErrorInfo.FirstError.md 'ErrorOrResult\.ErrorInfo\.FirstError')**

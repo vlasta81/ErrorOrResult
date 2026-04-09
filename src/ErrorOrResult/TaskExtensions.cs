@@ -1,4 +1,4 @@
-﻿
+
 namespace ErrorOrResult
 {
     /// <summary>
@@ -17,6 +17,10 @@ namespace ErrorOrResult
             try
             {
                 return Result.Success(await task.ConfigureAwait(false));
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -39,6 +43,10 @@ namespace ErrorOrResult
                 TOutput? value = await task.ConfigureAwait(false);
                 return value is not null ? Result.Success(value) : Result.Failure<TOutput>(error);
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 return Result.Failure<TOutput>(Error.Unexpected("Exception.Caught", ex.Message));
@@ -59,6 +67,10 @@ namespace ErrorOrResult
             {
                 TOutput? value = await task.ConfigureAwait(false);
                 return value.HasValue ? Result.Success(value.Value) : Result.Failure<TOutput>(error);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
             }
             catch (Exception ex)
             {

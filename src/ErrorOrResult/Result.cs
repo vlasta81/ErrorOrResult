@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using System.Diagnostics;
 
 namespace ErrorOrResult
@@ -11,9 +11,11 @@ namespace ErrorOrResult
     {
         private readonly TOutput? _value;
         private readonly ErrorInfo? _errorInfo;
+        private readonly bool _isSuccess;
 
-        private Result(TOutput? value, ErrorInfo? errorInfo)
+        private Result(bool isSuccess, TOutput? value, ErrorInfo? errorInfo)
         {
+            _isSuccess = isSuccess;
             _value = value;
             _errorInfo = errorInfo;
         }
@@ -21,7 +23,7 @@ namespace ErrorOrResult
         /// <summary>
         /// Gets a value indicating whether the result represents a successful operation.
         /// </summary>
-        public bool IsSuccess => _errorInfo is null && _value is not null;
+        public bool IsSuccess => _isSuccess;
 
         /// <summary>
         /// Gets a value indicating whether the result represents a failed operation.
@@ -55,7 +57,7 @@ namespace ErrorOrResult
         /// </summary>
         /// <param name="value">The success value.</param>
         /// <returns>A successful <see cref="Result{TOutput}"/>.</returns>
-        public static Result<TOutput> Success(TOutput value) => new Result<TOutput>(value, null);
+        public static Result<TOutput> Success(TOutput value) => new Result<TOutput>(true, value, null);
 
         /// <summary>
         /// Creates a failed result with the specified errors.
@@ -69,7 +71,7 @@ namespace ErrorOrResult
             {
                 throw new ArgumentException("At least one error required!", nameof(errors));
             }
-            return new Result<TOutput>(default, new ErrorInfo(errors.ToArray()));
+            return new Result<TOutput>(false, default, new ErrorInfo(errors));
         }
 
         //public static Result<TOutput> Failure(Error error) => new Result<TOutput>(default, new ErrorInfo(error));
@@ -81,7 +83,7 @@ namespace ErrorOrResult
         /// </summary>
         /// <param name="errorInfo">The error information.</param>
         /// <returns>A failed <see cref="Result{TOutput}"/>.</returns>
-        public static Result<TOutput> Failure(ErrorInfo errorInfo) => new Result<TOutput>(default, errorInfo);
+        public static Result<TOutput> Failure(ErrorInfo errorInfo) => new Result<TOutput>(false, default, errorInfo);
 
         /// <summary>
         /// Implicitly converts a value to a successful result.
@@ -170,7 +172,15 @@ namespace ErrorOrResult
         /// <param name="onSuccess">The function to execute if the result is successful.</param>
         /// <param name="onFailure">The function to execute if the result is in error state.</param>
         /// <returns>The value returned by either onSuccess or onFailure.</returns>
-        public TResult Match<TResult>(Func<TOutput, TResult> onSuccess, Func<ErrorInfo, TResult> onFailure) => IsSuccess ? onSuccess(_value!) : onFailure(_errorInfo!.Value);
+        /// <exception cref="InvalidOperationException">Thrown when the result is uninitialized.</exception>
+        public TResult Match<TResult>(Func<TOutput, TResult> onSuccess, Func<ErrorInfo, TResult> onFailure)
+        {
+            if (!IsSuccess && !IsError)
+            {
+                throw new InvalidOperationException("Cannot match uninitialized Result!");
+            }
+            return IsSuccess ? onSuccess(_value!) : onFailure(_errorInfo!.Value);
+        }
 
         /// <summary>
         /// Executes a side-effect action on the success value without modifying the result.
@@ -233,7 +243,8 @@ namespace ErrorOrResult
             {
                 return Result.Failure<TOutput>(mapper(errorInfo.FirstError));
             }
-            return Result.Failure<TOutput>(errorInfo.AllErrors.Select(mapper).ToArray());
+            ImmutableArray<Error> mapped = ImmutableArray.CreateRange(errorInfo.AllErrors, mapper);
+            return Result.Failure<TOutput>(new ErrorInfo(mapped.AsSpan()));
         }
 
         /// <summary>
@@ -242,8 +253,13 @@ namespace ErrorOrResult
         /// </summary>
         /// <param name="onSuccess">The action to execute if the result is successful.</param>
         /// <param name="onFailure">The action to execute if the result is in error state.</param>
+        /// <exception cref="InvalidOperationException">Thrown when the result is uninitialized.</exception>
         public void Switch(Action<TOutput> onSuccess, Action<ErrorInfo> onFailure)
         {
+            if (!IsSuccess && !IsError)
+            {
+                throw new InvalidOperationException("Cannot switch uninitialized Result!");
+            }
             if (IsSuccess)
             {
                 onSuccess(_value!);
@@ -279,6 +295,10 @@ namespace ErrorOrResult
         /// <returns>A result containing a tuple of both values if both are successful, otherwise a combined error result.</returns>
         public Result<(TOutput, TOther)> Combine<TOther>(Result<TOther> other)
         {
+            if ((!IsSuccess && !IsError) || (!other.IsSuccess && !other.IsError))
+            {
+                throw new InvalidOperationException("Cannot combine uninitialized Result!");
+            }
             if (IsSuccess && other.IsSuccess)
             {
                 return Result.Success((_value!, other._value!));
@@ -381,6 +401,10 @@ namespace ErrorOrResult
             {
                 return Success(func());
             }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 return Failure<TOutput>(Error.Unexpected("Exception.Caught", ex.Message));
@@ -398,6 +422,10 @@ namespace ErrorOrResult
             try
             {
                 return Success(await func().ConfigureAwait(false));
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
             }
             catch (Exception ex)
             {

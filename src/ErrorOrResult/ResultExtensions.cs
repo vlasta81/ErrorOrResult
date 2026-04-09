@@ -64,7 +64,7 @@ namespace ErrorOrResult
             Result<TOutput> result = await resultTask.ConfigureAwait(false);
             if (result.IsSuccess)
             {
-                await action(result.Value);
+                await action(result.Value).ConfigureAwait(false);
             }
             return result;
         }

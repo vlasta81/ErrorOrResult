@@ -1,4 +1,4 @@
-﻿
+
 namespace ErrorOrResult
 {
     /// <summary>
@@ -11,7 +11,7 @@ namespace ErrorOrResult
         /// </summary>
         /// <param name="errors">The span of errors.</param>
         /// <returns>An <see cref="ErrorInfo"/> instance.</returns>
-        internal static ErrorInfo Create(ReadOnlySpan<Error> errors) => new ErrorInfo(errors.ToArray());
+        internal static ErrorInfo Create(ReadOnlySpan<Error> errors) => new ErrorInfo(errors);
     }
 
 }

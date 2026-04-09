@@ -226,7 +226,7 @@ namespace ErrorOrResult
                 g => g.Key,
                 g => g.Select(e => e.Description).ToArray()
             );
-            return Results.ValidationProblem(errors);
+            return Results.ValidationProblem(errors, statusCode: 422);
         }
 
     }

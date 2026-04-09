@@ -5,7 +5,7 @@
 
 A lightweight, functional .NET library for handling operation results with explicit success and error states. Inspired by the Result pattern, this library helps you write more robust and maintainable code by making error handling explicit and type-safe.
 
-> **✨ What's New in v1.0.2**: Core functional methods (`Map`, `Bind`, `Match`, `Combine`, etc.) have been moved from extension classes to **instance methods** on `Result<T>` for better IntelliSense support and API discoverability. Async methods remain as extension methods. See [API Design Notes](#api-design-notes) or [CHANGELOG.md](CHANGELOG.md#migration-guide) for details.
+> **✨ What's New in v1.0.4**: Bug fixes for uninitialized `Result<T>` state in `Match`, `Switch` and `Combine` methods, missing `ConfigureAwait(false)` in `TapAsync`, performance optimization of `MapError` allocations, and expanded test coverage including HTTP extensions. See [CHANGELOG.md](CHANGELOG.md) for details.
 
 ## Features
 
@@ -119,34 +119,64 @@ var customError = new Error("Custom.Code", "Custom description", ErrorType.Confl
 
 ## ASP.NET Core Integration
 
-Convert results directly to HTTP responses using extension methods:
+Convert results directly to HTTP responses using extension methods. `ToHttpResult()` returns `IResult` and is designed for **Minimal API** endpoints:
 
 ```csharp
 using ErrorOrResult;
 
-[ApiController]
-[Route("api/[controller]")]
-public class UsersController : ControllerBase
+app.MapGet("/users/{id}", async (int id, IUserService userService) =>
 {
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetUser(int id)
-    {
-        var result = await _userService.GetUserByIdAsync(id);
-        // Use ToHttpResult extension method for automatic HTTP response conversion
-        return result.ToHttpResult(user => Ok(user));
-    }
+    var result = await userService.GetUserByIdAsync(id);
+    // Returns 200 OK with value on success, or Problem Details on error
+    return result.ToHttpResult();
+});
 
-    [HttpPost]
-    public async Task<IActionResult> CreateUser(CreateUserRequest request)
-    {
-        var result = await _userService.CreateUserAsync(request);
-        return result.ToHttpResult(user => CreatedAtAction(
-            nameof(GetUser), 
-            new { id = user.Id }, 
-            user
-        ));
-    }
-}
+app.MapPost("/users", async (CreateUserRequest request, IUserService userService) =>
+{
+    var result = await userService.CreateUserAsync(request);
+    // Custom success handler: returns 201 Created, errors produce Problem Details
+    return result.ToHttpResult(user => Results.Created($"/users/{user.Id}", user));
+});
+
+app.MapDelete("/users/{id}", async (int id, IUserService userService) =>
+{
+    Result<None> result = await userService.DeleteUserAsync(id);
+    // Result<None> success → 204 No Content
+    return result.ToHttpResult();
+});
+```
+
+### Typed HTTP results
+
+For endpoints that need typed results (e.g. for OpenAPI schema inference):
+
+```csharp
+app.MapGet("/users/{id}", (int id, IUserService userService) =>
+{
+    var result = userService.GetUser(id);
+    return result.ToOk();              // -> Ok<User> (200)
+});
+
+app.MapPost("/users", (CreateUserRequest req, IUserService svc) =>
+{
+    var result = svc.CreateUser(req);
+    return result.ToCreated($"/users/{result.Value.Id}");  // -> Created<User> (201)
+    // or: result.ToCreatedAtRoute("GetUser", new { id = result.Value.Id });
+    // or: result.ToAccepted("/api/status/123");           // -> Accepted<User> (202)
+    // or: result.ToNoContent();                           // -> NoContent (204), Result<None> only
+});
+```
+
+### Pattern matching to HTTP responses
+
+```csharp
+app.MapGet("/users/{id}", async (int id, IUserService svc) =>
+{
+    return await svc.GetUserByIdAsync(id)
+        .MatchHttpAsync(
+            onSuccess: user => Results.Ok(user),
+            onFailure: errors => Results.Problem(title: "Custom error", statusCode: 400));
+});
 ```
 
 ## Advanced Usage
@@ -220,22 +250,48 @@ var result = Result<User>.Failure(errorInfo);
 This library uses a hybrid approach for method organization:
 
 **Instance Methods** (called directly on `Result<T>`):
-- `Map<TResult>(...)` - Transform success value
-- `Bind<TResult>(...)` - Chain result-returning operations  
-- `Match<TResult>(...)` - Pattern matching on result state
-- `Tap(...)`, `TapError(...)` - Execute side effects
-- `Ensure(...)` - Validate with predicate
-- `MapError(...)` - Transform errors
-- `Switch(...)` - Execute actions based on state
-- `ThrowOnError()` - Throw exception if error state
-- `Combine<TOther>(Result<TOther>)` - Combine with another result into tuple
-- `WithDescription(...)` - On `Error` struct, create modified copy
+- `Map<TResult>(Func<TOutput, TResult>)` - Transform success value
+- `Bind<TResult>(Func<TOutput, Result<TResult>>)` - Chain result-returning operations  
+- `Match<TResult>(onSuccess, onFailure)` - Pattern matching on result state; throws on uninitialized result
+- `Tap(Action<TOutput>)` - Execute side effect on success, returns original result unchanged
+- `TapError(Action<ErrorInfo>)` - Execute side effect on error, returns original result unchanged
+- `Ensure(Func<TOutput, bool>, Error)` - Validate success value with predicate
+- `MapError(Func<Error, Error>)` - Transform all errors in a failed result
+- `Switch(Action<TOutput>, Action<ErrorInfo>)` - Execute actions based on state; throws on uninitialized result
+- `ThrowOnError()` - Throw `InvalidOperationException` if in error state, otherwise return value
+- `GetValueOrDefault(TOutput defaultValue)` - Return success value or the provided default
+- `GetValueOrThrow()` - Return success value or throw `InvalidOperationException`
+- `Combine<TOther>(Result<TOther>)` - Combine with another result into a `(TOutput, TOther)` tuple; combines all errors if either fails
+- `WithDescription(string)` - On `Error` struct, create a copy with updated description
 
 **Extension Methods** (for async operations and special cases):
 - `MapAsync`, `BindAsync`, `MatchAsync`, `TapAsync`, `EnsureAsync`, `ThrowOnErrorAsync` - Async variants for `Task<Result<T>>` (cannot be instance methods because they operate on `Task<Result<T>>`, not `Result<T>` itself - following standard .NET pattern like LINQ's `ToListAsync()`)
-- `ResultHttpExtensions.*` - ASP.NET Core HTTP response conversion
+- `ResultHttpExtensions.*` — ASP.NET Core Minimal API HTTP response conversion:
+  - `ToHttpResult(onSuccess?)` → `IResult` (200 OK / Problem Details)
+  - `ToHttpResultAsync(onSuccess?)` → `Task<IResult>`
+  - `ToOk()` → `Ok<TOutput>` (200)
+  - `ToCreated(uri)` → `Created<TOutput>` (201)
+  - `ToCreatedAtRoute(routeName, routeValues?)` → `CreatedAtRoute<TOutput>` (201)
+  - `ToAccepted(uri?)` → `Accepted<TOutput>` (202)
+  - `ToNoContent()` → `NoContent` (204), only for `Result<None>`
+  - `MatchHttp(onSuccess, onFailure?)` → `IResult`
+  - `MatchHttpAsync(onSuccess, onFailure?)` → `Task<IResult>`
+  - `ToProblem()` — on `ErrorInfo`, maps to RFC 7807 Problem Details
+  - `ToValidationProblem()` — on `ErrorInfo`, maps to HTTP 422 with grouped errors
 - `ResultLinqExtensions.*` - LINQ query syntax support (`Select`, `SelectMany`)
 - `TaskExtensions.*` - Convert `Task<T>` to `Result<T>`
+
+**Static Factory Methods** (on `Result` class):
+- `Result.Success<TOutput>(value)` — creates a successful result
+- `Result.Success()` — creates a successful `Result<None>` (no return value)
+- `Result.Failure<TOutput>(Error|Error[]|List<Error>|ErrorInfo)` — creates a failed result
+- `Result.Failure(Error|Error[]|List<Error>|ErrorInfo)` — creates a failed `Result<None>`
+- `Result.Try<TOutput>(Func<TOutput>)` — executes a function, catches exceptions as `Error.Unexpected`; re-throws `OperationCanceledException`
+- `Result.TryAsync<TOutput>(Func<Task<TOutput>>)` — async version of `Try`
+- `Result.Create<TOutput>(value, error?)` — wraps nullable reference or value type; returns error if null
+- `Result.Ensure<TOutput>(value, predicate, error)` — returns success if predicate passes, otherwise error
+- `Result.Of<TOutput>(Func<Result<TOutput>>)` — executes and returns the function's result
+- `Result.OfAsync<TOutput>(Func<Task<Result<TOutput>>>)` — async version of `Of`
 
 ## License
 

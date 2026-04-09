@@ -99,4 +99,90 @@ public class ErrorInfoTests
         Assert.Equal(firstError, errorInfo.FirstError);
         Assert.NotEqual(secondError, errorInfo.FirstError);
     }
+
+    [Fact]
+    public void ErrorInfo_ToString_WithSingleError_ShouldReturnSingleFormat()
+    {
+        var error = Error.NotFound("User.NotFound", "User not found");
+        var errorInfo = new ErrorInfo(error);
+
+        var str = errorInfo.ToString();
+
+        Assert.Equal("Error: User.NotFound", str);
+    }
+
+    [Fact]
+    public void ErrorInfo_ToString_WithMultipleErrors_ShouldReturnMultipleFormat()
+    {
+        var errors = new[]
+        {
+            Error.Validation("E1", "Desc1"),
+            Error.Conflict("E2", "Desc2"),
+            Error.NotFound("E3", "Desc3")
+        };
+        var errorInfo = new ErrorInfo(errors);
+
+        var str = errorInfo.ToString();
+
+        Assert.StartsWith("Errors (3):", str);
+        Assert.Contains("E1", str);
+        Assert.Contains("E2", str);
+        Assert.Contains("E3", str);
+    }
+
+    [Fact]
+    public void ErrorInfo_Default_Count_ShouldBeZero()
+    {
+        ErrorInfo errorInfo = default;
+
+        Assert.Equal(0, errorInfo.Count);
+    }
+
+    [Fact]
+    public void ErrorInfo_Default_AllErrors_ShouldReturnEmpty()
+    {
+        ErrorInfo errorInfo = default;
+
+        Assert.True(errorInfo.AllErrors.IsEmpty);
+    }
+
+    [Fact]
+    public void ErrorInfo_Default_FirstError_ShouldThrowInvalidOperationException()
+    {
+        ErrorInfo errorInfo = default;
+
+        Assert.Throws<InvalidOperationException>(() => errorInfo.FirstError);
+    }
+
+    [Fact]
+    public void ErrorInfo_Default_ToString_ShouldReturnNoErrors()
+    {
+        ErrorInfo errorInfo = default;
+
+        Assert.Equal("No errors", errorInfo.ToString());
+    }
+
+    [Fact]
+    public void ErrorInfo_WithEmptySpan_ShouldThrowArgumentException()
+    {
+        // ReadOnlySpan<T> cannot be captured in a lambda, so use try/catch directly
+        bool threw = false;
+        try
+        {
+            _ = new ErrorInfo(ReadOnlySpan<Error>.Empty);
+        }
+        catch (ArgumentException)
+        {
+            threw = true;
+        }
+        Assert.True(threw);
+    }
+
+    [Fact]
+    public void ErrorInfo_WithEmptyList_ShouldThrowArgumentException()
+    {
+        var errors = new List<Error>();
+
+        Assert.Throws<ArgumentException>(() => new ErrorInfo(errors));
+    }
 }

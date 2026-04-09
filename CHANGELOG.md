@@ -7,11 +7,72 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Quick Navigation
 
-- [Latest: v1.0.2](#102---2026-03-29) – Major refactoring: instance methods
+- [Latest: v1.0.4](#104---2026-04-10) – Bug Fixes, Performance & Tests
+- [Previous: v1.0.3](#103---2026-04-07) – Bug Fixes & Performance Optimizations
+- [v1.0.2](#102---2026-03-29) – Major refactoring: instance methods
 - [Migration Guide](#migration-guide) – Upgrading from v1.0.1
-- [Previous: v1.0.1](#101---previous-release) – Initial stable release
+- [Oldest: v1.0.1](#101---previous-release) – Initial stable release
 
 ---
+
+## [1.0.4] - 2026-04-10
+
+### Fixed
+
+- **Bug**: `Match` and `Switch` on an uninitialized `default(Result<T>)` now throw a clear `InvalidOperationException("Cannot match/switch uninitialized Result!")` instead of propagating an opaque `Nullable object must have a value` error from internal state access.
+- **Bug**: `Combine` on a `default(Result<T>)` instance or when the `other` argument is `default` now throws a clear `InvalidOperationException("Cannot combine uninitialized Result!")` instead of producing an `ArgumentException` from inside `ErrorInfo` with no useful context.
+- **Bug**: `ToValidationProblem()` (HTTP extension) was calling `Results.ValidationProblem()` without a `statusCode`, which defaults to HTTP 400 in ASP.NET Core — inconsistent with `ErrorType.Validation` mapping to 422. Fixed by explicitly passing `statusCode: 422`.
+- **Bug**: `TapAsync` in `ResultExtensions` was missing `.ConfigureAwait(false)` on the user-supplied async action, which could cause deadlocks in synchronization-context environments (e.g. WinForms, classic ASP.NET).
+- **Bug**: Duplicate `<PackageLicenseExpression>MIT</PackageLicenseExpression>` entry removed from `ErrorOrResult.csproj`.
+
+### Optimized
+
+- `MapError` for multi-error results no longer allocates an intermediate `Error[]` array. The mapper is now applied via `ImmutableArray.CreateRange(source, mapper)` and the result is passed directly as `ReadOnlySpan<Error>` to the `ErrorInfo` constructor, saving one GC allocation per call.
+
+### Tests
+
+- **New file `ResultHttpExtensionsTests.cs`**: Added ~35 unit tests covering the previously untested `ResultHttpExtensions` class:
+  - `ToHttpResult<TOutput>` — success (200 OK), custom handler, all `ErrorType` variants (400–520)
+  - `ToHttpResult(Result<None>)` — 204 No Content on success, Problem Details on error
+  - `ToHttpResultAsync` — async success and error paths
+  - `ToProblem` — per-type status codes, multi-error `extensions["errors"]` field, single-error without extension
+  - `ToValidationProblem` — error grouping by code, descriptions per group
+  - `ToOk`, `ToCreated`, `ToCreatedAtRoute`, `ToAccepted`, `ToNoContent` — success values and error throws
+  - `MatchHttp` / `MatchHttpAsync` — success branch, default error handler, custom error handler
+- **`ResultTests.cs`**: Added ~25 unit tests for previously uncovered `Result<T>` scenarios:
+  - `default(Result<T>)` state (`IsSuccess`, `IsError`, `ToString`)
+  - `default` + `Map`, `Bind`, `Match`, `Switch` — all throw `InvalidOperationException`
+  - `Combine` with uninitialized `this` or `other` — throws `InvalidOperationException`
+  - `Result.Try<T>` — success, exception capture, `OperationCanceledException` re-throw
+  - `Result.TryAsync<T>` — async variants of the above
+  - `Result.Create<T>` (class and struct) — null/non-null paths, custom error
+  - `Result.Ensure<T>` (static) — predicate pass and fail
+  - `Result.Of<T>` / `Result.OfAsync<T>` — success and error delegation
+- **`ErrorInfoTests.cs`**: Added ~6 unit tests:
+  - `ToString()` — single-error and multi-error format
+  - `default(ErrorInfo)` — `Count=0`, `AllErrors` empty, `FirstError` throws, `ToString` returns "No errors"
+  - Empty `ReadOnlySpan<Error>` and empty `List<Error>` constructors throw `ArgumentException`
+
+### Documentation
+
+- Added `<exception cref="InvalidOperationException">` XML doc to `Match` and `Switch` for the uninitialized-result case.
+- Updated README `What's New` banner to v1.0.4.
+- Corrected README ASP.NET Core example from MVC `IActionResult`/`ControllerBase` to Minimal API `IResult`/`Results.*` (the original example would not compile since `ToHttpResult()` returns `IResult`, not `IActionResult`).
+- Expanded README API Design Notes: documented all instance methods (`Tap`, `TapError`, `Switch`, `ThrowOnError`, `GetValueOrDefault`, `GetValueOrThrow`), all static factory methods (`Try`, `TryAsync`, `Create`, `Ensure`, `Of`, `OfAsync`, `Success()` no-value overload), and all HTTP extension methods (`ToOk`, `ToCreated`, `ToCreatedAtRoute`, `ToAccepted`, `ToNoContent`, `MatchHttp`, `MatchHttpAsync`, `ToProblem`, `ToValidationProblem`).
+
+---
+
+## [1.0.3] - 2026-04-07
+
+### Fixed
+
+- **Critical Bug**: Fixed an issue where `Result<T>.IsSuccess` would improperly return `false` on success states carrying a valid `null` value for nullable generic outputs. Added internal `_isSuccess` tracking.
+- Protected `ErrorInfo` struct methods (`Count`, `FirstError`, `ToString()`) from throwing `NullReferenceException` when triggered against a `default(ErrorInfo)` state.
+- Prevented wrapping `OperationCanceledException` into `Error.Unexpected` block in `TaskExtensions`, releasing standard async cancellation execution flows.
+
+### Optimized
+
+- Reduced internal object memory allocations. `ErrorInfo` object constructors no longer redundantly cycle through `.ToArray()` when handling `ReadOnlySpan<Error>` or generic configurations, directly utilizing optimized `ImmutableArray`.
 
 ## [1.0.2] - 2026-03-29
 

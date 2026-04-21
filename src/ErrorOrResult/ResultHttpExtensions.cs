@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Collections.Immutable;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ErrorOrResult
@@ -172,37 +173,40 @@ namespace ErrorOrResult
 
         /// <summary>
         /// Converts error information to a Problem Details (RFC 7807) HTTP response.
-        /// Maps error types to appropriate HTTP status codes.
+        /// Maps error types to appropriate HTTP status codes. The first error determines the status code;
+        /// additional errors are surfaced in the <c>errors</c> extension field.
         /// </summary>
         /// <param name="errorInfo">The error information to convert.</param>
         /// <returns>An <see cref="IResult"/> representing a problem details response.</returns>
         public static IResult ToProblem(this ErrorInfo errorInfo)
         {
             Error first = errorInfo.FirstError;
-            return first.Type switch
+            switch (first.Type)
             {
-                ErrorType.Validation => errorInfo.ToValidationProblem(),
-                ErrorType.Unauthorized => Results.Problem(
-                    title: first.Code,
-                    detail: first.Description,
-                    statusCode: 401),
-                ErrorType.Forbidden => Results.Problem(
-                    title: first.Code,
-                    detail: first.Description,
-                    statusCode: 403),
-                _ => Results.Problem(
-                    title: first.Code,
-                    detail: first.Description,
-                    statusCode: first.NumericType,
-                    extensions: errorInfo.Count > 1 ? new Dictionary<string, object?>
+                case ErrorType.Validation:
+                    return errorInfo.ToValidationProblem();
+                case ErrorType.Unauthorized:
+                    return Results.Problem(title: first.Code, detail: first.Description, statusCode: 401);
+                case ErrorType.Forbidden:
+                    return Results.Problem(title: first.Code, detail: first.Description, statusCode: 403);
+                default:
+                    IDictionary<string, object?>? extensions = null;
+                    if (errorInfo.Count > 1)
                     {
-                        ["errors"] = errorInfo.AllErrors.Select(e => new
+                        ImmutableArray<Error> all = errorInfo.AllErrors;
+                        object[] items = new object[all.Length];
+                        for (int i = 0; i < all.Length; i++)
                         {
-                            code = e.Code,
-                            message = e.Description
-                        })
-                    } : null)
-            };
+                            items[i] = new { code = all[i].Code, message = all[i].Description };
+                        }
+                        extensions = new Dictionary<string, object?>(1) { ["errors"] = items };
+                    }
+                    return Results.Problem(
+                        title: first.Code,
+                        detail: first.Description,
+                        statusCode: first.NumericType,
+                        extensions: extensions);
+            }
         }
 
         private static TOutput EnsureSuccess<TOutput>(Result<TOutput> result)
@@ -222,10 +226,23 @@ namespace ErrorOrResult
         /// <returns>An <see cref="IResult"/> representing a validation problem response.</returns>
         public static IResult ToValidationProblem(this ErrorInfo errorInfo)
         {
-            Dictionary<string, string[]> errors = errorInfo.AllErrors.GroupBy(e => e.Code).ToDictionary(
-                g => g.Key,
-                g => g.Select(e => e.Description).ToArray()
-            );
+            ImmutableArray<Error> all = errorInfo.AllErrors;
+            Dictionary<string, List<string>> grouped = new Dictionary<string, List<string>>(all.Length, StringComparer.Ordinal);
+            for (int i = 0; i < all.Length; i++)
+            {
+                Error e = all[i];
+                if (!grouped.TryGetValue(e.Code, out List<string>? list))
+                {
+                    list = new List<string>(1);
+                    grouped[e.Code] = list;
+                }
+                list.Add(e.Description);
+            }
+            Dictionary<string, string[]> errors = new Dictionary<string, string[]>(grouped.Count, StringComparer.Ordinal);
+            foreach (KeyValuePair<string, List<string>> kv in grouped)
+            {
+                errors[kv.Key] = kv.Value.ToArray();
+            }
             return Results.ValidationProblem(errors, statusCode: 422);
         }
 

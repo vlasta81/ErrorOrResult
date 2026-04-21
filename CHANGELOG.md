@@ -7,11 +7,92 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Quick Navigation
 
-- [Latest: v1.0.4](#104---2026-04-10) – Bug Fixes, Performance & Tests
-- [Previous: v1.0.3](#103---2026-04-07) – Bug Fixes & Performance Optimizations
+- [Latest: v1.1.0](#110---2026-04-10) – Security hardening, layout optimization, severity comparer
+- [Previous: v1.0.4](#104---2026-04-10) – Bug Fixes, Performance & Tests
+- [v1.0.3](#103---2026-04-07) – Bug Fixes & Performance Optimizations
 - [v1.0.2](#102---2026-03-29) – Major refactoring: instance methods
 - [Migration Guide](#migration-guide) – Upgrading from v1.0.1
 - [Oldest: v1.0.1](#101---previous-release) – Initial stable release
+
+---
+
+## [1.1.0] - 2026-04-10
+
+### Security
+
+- **`Try` / `TryAsync` / `ToResultAsync` no longer expose `Exception.Message` by default.** Previously the captured exception message became part of the returned `Error.Description`, which could leak internal paths, PII, database schema hints or stack context into error responses (especially when mapped through `ToProblem()` to an HTTP body). The default description is now a fixed, non-sensitive string: `"An exception was thrown during execution."` and the code is `"Exception.Caught"`.
+- For diagnostics, a new opt-in overload accepts a caller-supplied `Func<Exception, Error>` mapper:
+  - `Result.Try<T>(Func<T>, Func<Exception, Error> exceptionMapper)`
+  - `Result.TryAsync<T>(Func<Task<T>>, Func<Exception, Error> exceptionMapper)`
+  - `Task<T>.ToResultAsync(Func<Exception, Error> exceptionMapper)` (on `TaskExtensions`)
+- `OperationCanceledException` continues to be re-thrown and is never captured.
+
+### Added
+
+- **`ErrorComparers.BySeverityDescending`** — new public `IComparer<Error>` that orders errors by client-actionability (Validation=100, BadRequest=90, Conflict=80, Unauthorized=70, Forbidden=60, NotFound=50, Failure=20, Unexpected=10). Descending rank ensures the most actionable error comes first — which in turn drives the HTTP status returned by `ToProblem()`.
+- **`Result<T>.Combine<TOther>(Result<TOther> other, IComparer<Error>? errorComparer)`** — new overload that stable-sorts merged errors using the supplied comparer. When `errorComparer` is `null`, behaviour is identical to the existing `Combine(other)` (left-first ordering preserved, non-breaking).
+- Opt-in exception-mapping overloads for `Try`, `TryAsync`, and `Task<T>.ToResultAsync` (see **Security** above).
+- Internal `ErrorInfo.FromImmutable(ImmutableArray<Error>)` factory that wraps a pre-built array without re-validation or copying — used by `MapError` and both `Combine` overloads to avoid extra allocations.
+
+### Changed
+
+- **`Combine` public contract is now explicitly documented** (XML `<remarks>`): errors are concatenated left-first, and `FirstError.Type` determines the HTTP status code when converted via `ToProblem()`. No behavioural change; use the new `IComparer<Error>` overload to reorder.
+- **`Error[]` / `List<Error>` static `Failure` factories now throw `ArgumentNullException` on null input** instead of `NullReferenceException` from the underlying `ErrorInfo` constructor.
+- **`Result.Failure(ErrorInfo)` now throws `ArgumentException` when given `default(ErrorInfo)`** (`Count == 0`) instead of silently producing a "successful-but-error" inconsistent state.
+- **`MapError(null)` now throws `ArgumentNullException`** (previously `NullReferenceException`).
+
+### Fixed
+
+- **`Result<T>.ToString()` on a failed result** now renders the actual `ErrorInfo` contents (`"Failure: [Code] Description ..."`) instead of the type name (`"Failure: ErrorOrResult.ErrorInfo"`) that leaked from the underlying `Nullable<ErrorInfo>.ToString()`.
+
+### Performance
+
+- **`Result<T>` struct layout reduced by ~50%** (e.g. `Result<int>` from 32 B → 16 B on 64-bit). The internal `Nullable<ErrorInfo>` wrapper was replaced with a plain `ErrorInfo` field; error-state detection now uses `_errorInfo.Count > 0`. Eliminates per-access `Nullable<T>.Value` copies in hot paths (`Map`, `Bind`, `Match`, `Combine`, `TapError`, `MapError`, `Switch`, `ThrowOnError`, `ErrorInfo` getter). **Public API is unchanged** — consumers need no code changes.
+- **`MapError` and `Combine` now use `ImmutableArray.CreateBuilder(capacity) + MoveToImmutable()`** instead of intermediate arrays, avoiding one redundant copy per call.
+- **`ToProblem()` / `ToValidationProblem()` (HTTP extensions) are now LINQ-free**, using direct `switch` on `FirstError.Type` and a plain `Dictionary<string, List<string>>` for grouping — removes ~3 LINQ allocations per HTTP response.
+- **`Result.Success()` (the `Result<None>` overload)** now returns a cached static instance instead of constructing a new struct on each call.
+- `ErrorInfo.ToString()` is now LINQ/StringBuilder-free for the single-error case and uses `string.Create` for multi-error formatting.
+
+### Tests
+
+- Added 14 regression tests in `AnalysisRegressionTests.cs` covering:
+  - `default(ErrorInfo)` rejection in `Failure(ErrorInfo)`
+  - Null-argument throws for array / list / mapper parameters
+  - `ToString` regression guard (no more `ErrorOrResult.ErrorInfo` leak)
+  - `Result.Success()` caching contract
+  - `Combine` left-first ordering (regression guard)
+  - `Combine` with severity comparer: validation placed before not-found regardless of operand order
+  - `Combine` with `null` comparer preserves operand order
+  - `ErrorComparers.BySeverityDescending` ranks all 8 `ErrorType` values correctly
+  - `ErrorInfo` default/empty-span/empty-list validation
+  - `ErrorInfo.ToString` with multiple errors
+- Added `Result_TryAsync_WithExceptionMapper_ShouldUseMapperResult` and sibling sync tests for the new mapper overloads.
+- Updated existing exception-capture tests to assert the secure default (mass `DoesNotContain("oops")`) rather than leaking the exception message.
+- **Total test count: 210** (was 196) — all passing.
+
+### Documentation
+
+- Added full XML docs to `ErrorComparers`, `BySeverityDescending`, and both `Combine` overloads (including severity rank table in `<remarks>`).
+- Documented the security rationale for the new exception-mapping overloads.
+- README: new **"Combining Results"** and **"Exception Capture"** sections; `What's New` banner updated to v1.1.0; API Design Notes now list the new overloads.
+
+### Migration
+
+`v1.1.0` is a **minor, non-breaking release** for typical consumers:
+
+- ✅ All existing public APIs preserve their signatures and behaviour.
+- ✅ The internal `Result<T>` layout change is invisible to callers (public `Value`, `ErrorInfo`, `IsSuccess`, `IsError` are unchanged).
+- ✅ The new `Combine(other, IComparer<Error>?)` overload is additive.
+- ⚠️ **Behavioural tightening**: if your code relied on `Result.Try(...)` putting `ex.Message` into `Error.Description`, you must switch to the new mapper overload:
+  ```csharp
+  // Before (v1.0.x) — description was ex.Message
+  var r = Result.Try(() => Risky());
+
+  // After (v1.1.0) — default description is generic; use mapper for details
+  var r = Result.Try(() => Risky(), ex => Error.Failure("Risky.Failed", ex.Message));
+  ```
+- ⚠️ `Result.Failure(default(ErrorInfo))` now throws `ArgumentException` instead of returning a broken result. If any code path produced this, it was already a latent bug.
+- ⚠️ Passing `null` to the `Error[]` / `List<Error>` `Failure` overloads or to `MapError` now throws `ArgumentNullException` instead of `NullReferenceException`.
 
 ---
 

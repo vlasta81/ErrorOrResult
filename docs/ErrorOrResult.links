@@ -17,6 +17,8 @@ M:ErrorOrResult.Error.Deconstruct(System.String@,System.String@,ErrorOrResult.Er
 M:ErrorOrResult.Error.WithDescription(System.String)|Error.WithDescription.EH9TE395ANNXXQ7TSINBKRB5D.md|WithDescription(string)
 N:ErrorOrResult|ErrorOrResult.md|ErrorOrResult
 T:ErrorOrResult.Error|Error.md|Error
+P:ErrorOrResult.ErrorComparers.BySeverityDescending|ErrorComparers.BySeverityDescending.md|BySeverityDescending
+T:ErrorOrResult.ErrorComparers|ErrorComparers.md|ErrorComparers
 P:ErrorOrResult.ErrorInfo.FirstError|ErrorInfo.FirstError.md|FirstError
 P:ErrorOrResult.ErrorInfo.AllErrors|ErrorInfo.AllErrors.md|AllErrors
 P:ErrorOrResult.ErrorInfo.Count|ErrorInfo.Count.md|Count
@@ -63,7 +65,8 @@ M:ErrorOrResult.Result`1.Ensure(System.Func{`0,System.Boolean},ErrorOrResult.Err
 M:ErrorOrResult.Result`1.MapError(System.Func{ErrorOrResult.Error,ErrorOrResult.Error})|Result_TOutput_.MapError.QDN2J1O29ZE5MOF94KU2FY0XA.md|MapError(Func<Error,Error>)
 M:ErrorOrResult.Result`1.Switch(System.Action{`0},System.Action{ErrorOrResult.ErrorInfo})|Result_TOutput_.Switch.2QF0XVVXYOCRF9L31O3D2POB3.md|Switch(Action<TOutput>, Action<ErrorInfo>)
 M:ErrorOrResult.Result`1.ThrowOnError|Result_TOutput_.ThrowOnError().md|ThrowOnError()
-M:ErrorOrResult.Result`1.Combine``1(ErrorOrResult.Result{``0})|Result_TOutput_.Combine.KHJMMOA058HTTE1VHM3AYNIY8.md|Combine<TOther>(Result<TOther>)
+M:ErrorOrResult.Result`1.Combine``1(ErrorOrResult.Result{``0})|Result_TOutput_.Combine.md#ErrorOrResult.Result_TOutput_.Combine_TOther_(ErrorOrResult.Result_TOther_)|Combine<TOther>(Result<TOther>)
+M:ErrorOrResult.Result`1.Combine``1(ErrorOrResult.Result{``0},System.Collections.Generic.IComparer{ErrorOrResult.Error})|Result_TOutput_.Combine.md#ErrorOrResult.Result_TOutput_.Combine_TOther_(ErrorOrResult.Result_TOther_,System.Collections.Generic.IComparer_ErrorOrResult.Error_)|Combine<TOther>(Result<TOther>, IComparer<Error>)
 T:ErrorOrResult.Result`1|Result_TOutput_.md|Result<TOutput>
 M:ErrorOrResult.Result.Success|Result.Success.md#ErrorOrResult.Result.Success()|Success()
 M:ErrorOrResult.Result.Success``1(``0)|Result.Success.md#ErrorOrResult.Result.Success_TOutput_(TOutput)|Success<TOutput>(TOutput)
@@ -75,8 +78,10 @@ M:ErrorOrResult.Result.Failure(ErrorOrResult.Error)|Result.Failure.md#ErrorOrRes
 M:ErrorOrResult.Result.Failure(ErrorOrResult.Error[])|Result.Failure.md#ErrorOrResult.Result.Failure(ErrorOrResult.Error[])|Failure(Error[])
 M:ErrorOrResult.Result.Failure(System.Collections.Generic.List{ErrorOrResult.Error})|Result.Failure.md#ErrorOrResult.Result.Failure(System.Collections.Generic.List_ErrorOrResult.Error_)|Failure(List<Error>)
 M:ErrorOrResult.Result.Failure(ErrorOrResult.ErrorInfo)|Result.Failure.md#ErrorOrResult.Result.Failure(ErrorOrResult.ErrorInfo)|Failure(ErrorInfo)
-M:ErrorOrResult.Result.Try``1(System.Func{``0})|Result.Try.X6I13YPHXNJ0IWAKLB8TRHZLB.md|Try<TOutput>(Func<TOutput>)
-M:ErrorOrResult.Result.TryAsync``1(System.Func{System.Threading.Tasks.Task{``0}})|Result.TryAsync.6HIRWBMFRGN25909M4YTIZ701.md|TryAsync<TOutput>(Func<Task<TOutput>>)
+M:ErrorOrResult.Result.Try``1(System.Func{``0})|Result.Try.md#ErrorOrResult.Result.Try_TOutput_(System.Func_TOutput_)|Try<TOutput>(Func<TOutput>)
+M:ErrorOrResult.Result.Try``1(System.Func{``0},System.Func{System.Exception,ErrorOrResult.Error})|Result.Try.md#ErrorOrResult.Result.Try_TOutput_(System.Func_TOutput_,System.Func_System.Exception,ErrorOrResult.Error_)|Try<TOutput>(Func<TOutput>, Func<Exception,Error>)
+M:ErrorOrResult.Result.TryAsync``1(System.Func{System.Threading.Tasks.Task{``0}})|Result.TryAsync.md#ErrorOrResult.Result.TryAsync_TOutput_(System.Func_System.Threading.Tasks.Task_TOutput__)|TryAsync<TOutput>(Func<Task<TOutput>>)
+M:ErrorOrResult.Result.TryAsync``1(System.Func{System.Threading.Tasks.Task{``0}},System.Func{System.Exception,ErrorOrResult.Error})|Result.TryAsync.md#ErrorOrResult.Result.TryAsync_TOutput_(System.Func_System.Threading.Tasks.Task_TOutput__,System.Func_System.Exception,ErrorOrResult.Error_)|TryAsync<TOutput>(Func<Task<TOutput>>, Func<Exception,Error>)
 M:ErrorOrResult.Result.Create``1(``0,System.Nullable{ErrorOrResult.Error})|Result.Create.md#ErrorOrResult.Result.Create_TOutput_(TOutput,System.Nullable_ErrorOrResult.Error_)|Create<TOutput>(TOutput, Nullable<Error>)
 M:ErrorOrResult.Result.Create``1(System.Nullable{``0},System.Nullable{ErrorOrResult.Error})|Result.Create.md#ErrorOrResult.Result.Create_TOutput_(System.Nullable_TOutput_,System.Nullable_ErrorOrResult.Error_)|Create<TOutput>(Nullable<TOutput>, Nullable<Error>)
 M:ErrorOrResult.Result.Ensure``1(``0,System.Func{``0,System.Boolean},ErrorOrResult.Error)|Result.Ensure.PDSAUZYTSY5BGDQ5WQARZU1VC.md|Ensure<TOutput>(TOutput, Func<TOutput,bool>, Error)
@@ -109,13 +114,17 @@ M:ErrorOrResult.ResultLinqExtensions.SelectMany``2(ErrorOrResult.Result{``0},Sys
 M:ErrorOrResult.ResultLinqExtensions.SelectMany``3(ErrorOrResult.Result{``0},System.Func{``0,ErrorOrResult.Result{``1}},System.Func{``0,``1,``2})|ResultLinqExtensions.SelectMany.md#ErrorOrResult.ResultLinqExtensions.SelectMany_TSource,TCollection,TOutput_(thisErrorOrResult.Result_TSource_,System.Func_TSource,ErrorOrResult.Result_TCollection__,System.Func_TSource,TCollection,TOutput_)|SelectMany<TSource,TCollection,TOutput>(this Result<TSource>, Func<TSource,Result<TCollection>>, Func<TSource,TCollection,TOutput>)
 T:ErrorOrResult.ResultLinqExtensions|ResultLinqExtensions.md|ResultLinqExtensions
 M:ErrorOrResult.TaskExtensions.ToResultAsync``1(System.Threading.Tasks.Task{``0})|TaskExtensions.ToResultAsync.md#ErrorOrResult.TaskExtensions.ToResultAsync_TOutput_(thisSystem.Threading.Tasks.Task_TOutput_)|ToResultAsync<TOutput>(this Task<TOutput>)
+M:ErrorOrResult.TaskExtensions.ToResultAsync``1(System.Threading.Tasks.Task{``0},System.Func{System.Exception,ErrorOrResult.Error})|TaskExtensions.ToResultAsync.md#ErrorOrResult.TaskExtensions.ToResultAsync_TOutput_(thisSystem.Threading.Tasks.Task_TOutput_,System.Func_System.Exception,ErrorOrResult.Error_)|ToResultAsync<TOutput>(this Task<TOutput>, Func<Exception,Error>)
 M:ErrorOrResult.TaskExtensions.ToResultAsync``1(System.Threading.Tasks.Task{``0},ErrorOrResult.Error)|TaskExtensions.ToResultAsync.md#ErrorOrResult.TaskExtensions.ToResultAsync_TOutput_(thisSystem.Threading.Tasks.Task_TOutput_,ErrorOrResult.Error)|ToResultAsync<TOutput>(this Task<TOutput>, Error)
 M:ErrorOrResult.TaskExtensions.ToResultAsync``1(System.Threading.Tasks.Task{System.Nullable{``0}},ErrorOrResult.Error)|TaskExtensions.ToResultAsync.md#ErrorOrResult.TaskExtensions.ToResultAsync_TOutput_(thisSystem.Threading.Tasks.Task_System.Nullable_TOutput__,ErrorOrResult.Error)|ToResultAsync<TOutput>(this Task<Nullable<TOutput>>, Error)
 T:ErrorOrResult.TaskExtensions|TaskExtensions.md|TaskExtensions
 ?:ErrorOrResult.ErrorInfo.#ctor|ErrorInfo.ErrorInfo.md|ErrorInfo
 ?:ErrorOrResult.Result`1.Failure|Result_TOutput_.Failure.md|Failure
+?:ErrorOrResult.Result`1.Combine|Result_TOutput_.Combine.md|Combine
 ?:ErrorOrResult.Result.Success|Result.Success.md|Success
 ?:ErrorOrResult.Result.Failure|Result.Failure.md|Failure
+?:ErrorOrResult.Result.Try|Result.Try.md|Try
+?:ErrorOrResult.Result.TryAsync|Result.TryAsync.md|TryAsync
 ?:ErrorOrResult.Result.Create|Result.Create.md|Create
 ?:ErrorOrResult.ResultHttpExtensions.ToHttpResult|ResultHttpExtensions.ToHttpResult.md|ToHttpResult
 ?:ErrorOrResult.ResultHttpExtensions.ToHttpResultAsync|ResultHttpExtensions.ToHttpResultAsync.md|ToHttpResultAsync

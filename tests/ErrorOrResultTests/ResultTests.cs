@@ -350,7 +350,7 @@ public class ResultTests
 
         Assert.True(result.IsError);
         Assert.Equal("Exception.Caught", result.Error.Code);
-        Assert.Equal("oops", result.Error.Description);
+        Assert.DoesNotContain("oops", result.Error.Description);
         Assert.Equal(ErrorType.Unexpected, result.Error.Type);
     }
 
@@ -377,6 +377,18 @@ public class ResultTests
 
         Assert.True(result.IsError);
         Assert.Equal("Exception.Caught", result.Error.Code);
+        Assert.DoesNotContain("async fail", result.Error.Description);
+    }
+
+    [Fact]
+    public async Task Result_TryAsync_WithExceptionMapper_ShouldUseMapperResult()
+    {
+        var result = await Result.TryAsync<int>(
+            () => Task.FromException<int>(new Exception("async fail")),
+            ex => Error.Failure("Async.Code", ex.Message));
+
+        Assert.True(result.IsError);
+        Assert.Equal("Async.Code", result.Error.Code);
         Assert.Equal("async fail", result.Error.Description);
     }
 

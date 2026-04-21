@@ -1,6 +1,6 @@
 ## ErrorInfo\.AllErrors Property
 
-Gets all errors as an immutable array\.
+Gets all errors as an immutable array\. Returns an empty array when the instance is uninitialized \(default\)\.
 
 ```csharp
 public System.Collections.Immutable.ImmutableArray<ErrorOrResult.Error> AllErrors { get; }

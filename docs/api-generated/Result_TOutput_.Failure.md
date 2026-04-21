@@ -23,11 +23,16 @@ public static ErrorOrResult.Result<TOutput> Failure(ErrorOrResult.ErrorInfo erro
 
 `errorInfo` [ErrorInfo](ErrorInfo.md 'ErrorOrResult\.ErrorInfo')
 
-The error information\.
+The error information\. Must not be `default`\.
 
 #### Returns
 [ErrorOrResult\.Result&lt;](Result_TOutput_.md 'ErrorOrResult\.Result\<TOutput\>')[TOutput](Result_TOutput_.md#ErrorOrResult.Result_TOutput_.TOutput 'ErrorOrResult\.Result\<TOutput\>\.TOutput')[&gt;](Result_TOutput_.md 'ErrorOrResult\.Result\<TOutput\>')  
 A failed [Result&lt;TOutput&gt;](Result_TOutput_.md 'ErrorOrResult\.Result\<TOutput\>')\.
+
+#### Exceptions
+
+[System\.ArgumentException](https://learn.microsoft.com/en-us/dotnet/api/system.argumentexception 'System\.ArgumentException')  
+Thrown when [errorInfo](Result_TOutput_.md#ErrorOrResult.Result_TOutput_.Failure(ErrorOrResult.ErrorInfo).errorInfo 'ErrorOrResult\.Result\<TOutput\>\.Failure\(ErrorOrResult\.ErrorInfo\)\.errorInfo') is `default` \(uninitialized\)\.
 
 <a name='ErrorOrResult.Result_TOutput_.Failure(System.ReadOnlySpan_ErrorOrResult.Error_)'></a>
 

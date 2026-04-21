@@ -24,7 +24,7 @@ public class TaskExtensionsTests
 
         Assert.True(result.IsError);
         Assert.Equal("Exception.Caught", result.Error.Code);
-        Assert.Equal("Test exception", result.Error.Description);
+        Assert.DoesNotContain("Test exception", result.Error.Description);
         Assert.Equal(ErrorType.Unexpected, result.Error.Type);
     }
 
@@ -62,7 +62,7 @@ public class TaskExtensionsTests
 
         Assert.True(result.IsError);
         Assert.Equal("Exception.Caught", result.Error.Code);
-        Assert.Equal("Test argument exception", result.Error.Description);
+        Assert.DoesNotContain("Test argument exception", result.Error.Description);
         Assert.Equal(ErrorType.Unexpected, result.Error.Type);
     }
 
@@ -100,7 +100,7 @@ public class TaskExtensionsTests
 
         Assert.True(result.IsError);
         Assert.Equal("Exception.Caught", result.Error.Code);
-        Assert.Equal("Request timeout", result.Error.Description);
+        Assert.DoesNotContain("Request timeout", result.Error.Description);
     }
 
     [Fact]

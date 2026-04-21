@@ -10,10 +10,10 @@ namespace ErrorOrResult
     public readonly struct Result<TOutput>
     {
         private readonly TOutput? _value;
-        private readonly ErrorInfo? _errorInfo;
+        private readonly ErrorInfo _errorInfo;
         private readonly bool _isSuccess;
 
-        private Result(bool isSuccess, TOutput? value, ErrorInfo? errorInfo)
+        private Result(bool isSuccess, TOutput? value, ErrorInfo errorInfo)
         {
             _isSuccess = isSuccess;
             _value = value;
@@ -28,7 +28,7 @@ namespace ErrorOrResult
         /// <summary>
         /// Gets a value indicating whether the result represents a failed operation.
         /// </summary>
-        public bool IsError => _errorInfo is not null;
+        public bool IsError => _errorInfo.Count > 0;
 
         /// <summary>
         /// Gets the success value. Throws an exception if the result is in an error state.
@@ -40,7 +40,7 @@ namespace ErrorOrResult
         /// Gets the error information. Throws an exception if the result is in a success state.
         /// </summary>
         /// <exception cref="InvalidOperationException">Thrown when accessing error info in success state.</exception>
-        public ErrorInfo ErrorInfo => IsError ? _errorInfo!.Value : throw new InvalidOperationException("Cannot access error info when in success state");
+        public ErrorInfo ErrorInfo => IsError ? _errorInfo : throw new InvalidOperationException("Cannot access error info when in success state");
 
         /// <summary>
         /// Gets the first error. Throws an exception if the result is in a success state.
@@ -57,7 +57,7 @@ namespace ErrorOrResult
         /// </summary>
         /// <param name="value">The success value.</param>
         /// <returns>A successful <see cref="Result{TOutput}"/>.</returns>
-        public static Result<TOutput> Success(TOutput value) => new Result<TOutput>(true, value, null);
+        public static Result<TOutput> Success(TOutput value) => new Result<TOutput>(true, value, default);
 
         /// <summary>
         /// Creates a failed result with the specified errors.
@@ -81,9 +81,17 @@ namespace ErrorOrResult
         /// <summary>
         /// Creates a failed result with the specified error information.
         /// </summary>
-        /// <param name="errorInfo">The error information.</param>
+        /// <param name="errorInfo">The error information. Must not be <c>default</c>.</param>
         /// <returns>A failed <see cref="Result{TOutput}"/>.</returns>
-        public static Result<TOutput> Failure(ErrorInfo errorInfo) => new Result<TOutput>(false, default, errorInfo);
+        /// <exception cref="ArgumentException">Thrown when <paramref name="errorInfo"/> is <c>default</c> (uninitialized).</exception>
+        public static Result<TOutput> Failure(ErrorInfo errorInfo)
+        {
+            if (errorInfo.Count == 0)
+            {
+                throw new ArgumentException("ErrorInfo must contain at least one error.", nameof(errorInfo));
+            }
+            return new Result<TOutput>(false, default, errorInfo);
+        }
 
         /// <summary>
         /// Implicitly converts a value to a successful result.
@@ -131,6 +139,7 @@ namespace ErrorOrResult
         /// <returns>A string describing the result state and value or error.</returns>
         public override string ToString() => !IsSuccess && !IsError ? "Uninitialized Result!" : IsSuccess ? $"Success: {_value}" : $"Failure: {_errorInfo}";
 
+
         /// <summary>
         /// Maps the success value of a result to a new value using the specified selector function.
         /// If the result is in error state, the error is propagated.
@@ -145,7 +154,7 @@ namespace ErrorOrResult
             {
                 throw new InvalidOperationException("Cannot map uninitialized Result!");
             }
-            return IsSuccess ? Result.Success(selector(_value!)) : Result.Failure<TResult>(_errorInfo!.Value);
+            return IsSuccess ? Result.Success(selector(_value!)) : Result.Failure<TResult>(_errorInfo);
         }
 
         /// <summary>
@@ -162,7 +171,7 @@ namespace ErrorOrResult
             {
                 throw new InvalidOperationException("Cannot bind uninitialized Result!");
             }
-            return IsSuccess ? binder(_value!) : Result.Failure<TResult>(_errorInfo!.Value);
+            return IsSuccess ? binder(_value!) : Result.Failure<TResult>(_errorInfo);
         }
 
         /// <summary>
@@ -179,7 +188,7 @@ namespace ErrorOrResult
             {
                 throw new InvalidOperationException("Cannot match uninitialized Result!");
             }
-            return IsSuccess ? onSuccess(_value!) : onFailure(_errorInfo!.Value);
+            return IsSuccess ? onSuccess(_value!) : onFailure(_errorInfo);
         }
 
         /// <summary>
@@ -207,7 +216,7 @@ namespace ErrorOrResult
         {
             if (IsError)
             {
-                action(_errorInfo!.Value);
+                action(_errorInfo);
             }
             return this;
         }
@@ -234,17 +243,18 @@ namespace ErrorOrResult
         /// <returns>The original result if successful, otherwise a result with transformed errors.</returns>
         public Result<TOutput> MapError(Func<Error, Error> mapper)
         {
+            ArgumentNullException.ThrowIfNull(mapper);
             if (!IsError)
             {
                 return this;
             }
-            ErrorInfo errorInfo = _errorInfo!.Value;
+            ErrorInfo errorInfo = _errorInfo;
             if (errorInfo.Count == 1)
             {
                 return Result.Failure<TOutput>(mapper(errorInfo.FirstError));
             }
             ImmutableArray<Error> mapped = ImmutableArray.CreateRange(errorInfo.AllErrors, mapper);
-            return Result.Failure<TOutput>(new ErrorInfo(mapped.AsSpan()));
+            return Result.Failure<TOutput>(ErrorInfo.FromImmutable(mapped));
         }
 
         /// <summary>
@@ -266,7 +276,7 @@ namespace ErrorOrResult
             }
             else
             {
-                onFailure(_errorInfo!.Value);
+                onFailure(_errorInfo);
             }
         }
 
@@ -280,7 +290,7 @@ namespace ErrorOrResult
         {
             if (IsError)
             {
-                Error error = _errorInfo!.Value.FirstError;
+                Error error = _errorInfo.FirstError;
                 throw new InvalidOperationException($"Error: {error.Code} - {error.Description}");
             }
             return _value!;
@@ -288,8 +298,13 @@ namespace ErrorOrResult
 
         /// <summary>
         /// Combines this result with another result into a single result containing a tuple of both values.
-        /// If either result is in error state, all errors are combined.
+        /// If either result is in error state, all errors are combined (errors from <c>this</c> first, then from <paramref name="other"/>).
         /// </summary>
+        /// <remarks>
+        /// Errors are concatenated in the order of operands. The first error determines the resulting HTTP status code
+        /// when converted via <c>ToProblem</c>. If different <see cref="ErrorType"/> values are combined, callers should
+        /// be aware that the representative type is <c>FirstError.Type</c>.
+        /// </remarks>
         /// <typeparam name="TOther">The type of the other result value.</typeparam>
         /// <param name="other">The other result to combine with.</param>
         /// <returns>A result containing a tuple of both values if both are successful, otherwise a combined error result.</returns>
@@ -303,10 +318,38 @@ namespace ErrorOrResult
             {
                 return Result.Success((_value!, other._value!));
             }
-            var errors = ImmutableArray.CreateBuilder<Error>();
-            if (IsError) errors.AddRange(_errorInfo!.Value.AllErrors);
-            if (other.IsError) errors.AddRange(other._errorInfo!.Value.AllErrors);
-            return Result.Failure<(TOutput, TOther)>(errors.ToArray());
+            int thisCount = IsError ? _errorInfo.Count : 0;
+            int otherCount = other.IsError ? other._errorInfo.Count : 0;
+            ImmutableArray<Error>.Builder builder = ImmutableArray.CreateBuilder<Error>(thisCount + otherCount);
+            if (IsError) builder.AddRange(_errorInfo.AllErrors);
+            if (other.IsError) builder.AddRange(other._errorInfo.AllErrors);
+            return Result.Failure<(TOutput, TOther)>(ErrorInfo.FromImmutable(builder.MoveToImmutable()));
+        }
+
+        /// <summary>
+        /// Combines this result with another result into a single result containing a tuple of both values,
+        /// optionally reordering combined errors using the specified comparer.
+        /// </summary>
+        /// <remarks>
+        /// When <paramref name="errorComparer"/> is <c>null</c>, behaves identically to <see cref="Combine{TOther}(Result{TOther})"/>
+        /// (errors from <c>this</c> first, then from <paramref name="other"/>). When a comparer is supplied, errors are
+        /// stable-sorted by it &#8212; useful for placing the most actionable error first (e.g. <see cref="ErrorComparers.BySeverityDescending"/>),
+        /// which then determines the HTTP status code produced by <c>ToProblem</c>.
+        /// </remarks>
+        /// <typeparam name="TOther">The type of the other result value.</typeparam>
+        /// <param name="other">The other result to combine with.</param>
+        /// <param name="errorComparer">Optional comparer used to stable-sort combined errors. When <c>null</c>, operand order is preserved.</param>
+        /// <returns>A result containing a tuple of both values if both are successful, otherwise a combined error result.</returns>
+        public Result<(TOutput, TOther)> Combine<TOther>(Result<TOther> other, IComparer<Error>? errorComparer)
+        {
+            Result<(TOutput, TOther)> combined = Combine(other);
+            if (errorComparer is null || !combined.IsError || combined._errorInfo.Count < 2)
+            {
+                return combined;
+            }
+            Error[] sorted = combined._errorInfo.AllErrors.ToArray();
+            Array.Sort(sorted, errorComparer);
+            return Result.Failure<(TOutput, TOther)>(ErrorInfo.FromImmutable(ImmutableArray.Create(sorted)));
         }
     }
 
@@ -315,11 +358,19 @@ namespace ErrorOrResult
     /// </summary>
     public static class Result
     {
+        private static readonly Result<None> _successNone = Result<None>.Success(default);
+
+        /// <summary>
+        /// Default generic description used when an exception is captured by <c>Try</c>/<c>TryAsync</c>.
+        /// The exception message is intentionally omitted to avoid leaking sensitive information.
+        /// </summary>
+        internal const string DefaultExceptionDescription = "An exception was thrown during execution.";
+
         /// <summary>
         /// Creates a successful result with no value (using <see cref="None"/>).
         /// </summary>
         /// <returns>A successful result with no value.</returns>
-        public static Result<None> Success() => Result<None>.Success(default(None));
+        public static Result<None> Success() => _successNone;
 
         /// <summary>
         /// Creates a successful result with the specified value.
@@ -343,7 +394,12 @@ namespace ErrorOrResult
         /// <typeparam name="TOutput">The type of the success value.</typeparam>
         /// <param name="errors">The errors that occurred.</param>
         /// <returns>A failed <see cref="Result{TOutput}"/>.</returns>
-        public static Result<TOutput> Failure<TOutput>(Error[] errors) => Result<TOutput>.Failure(errors);
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="errors"/> is null.</exception>
+        public static Result<TOutput> Failure<TOutput>(Error[] errors)
+        {
+            ArgumentNullException.ThrowIfNull(errors);
+            return Result<TOutput>.Failure(errors);
+        }
 
         /// <summary>
         /// Creates a failed result with a list of errors.
@@ -351,6 +407,7 @@ namespace ErrorOrResult
         /// <typeparam name="TOutput">The type of the success value.</typeparam>
         /// <param name="errors">The errors that occurred.</param>
         /// <returns>A failed <see cref="Result{TOutput}"/>.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="errors"/> is null.</exception>
         public static Result<TOutput> Failure<TOutput>(List<Error> errors) => Result<TOutput>.Failure(errors);
 
         /// <summary>
@@ -373,13 +430,19 @@ namespace ErrorOrResult
         /// </summary>
         /// <param name="errors">The errors that occurred.</param>
         /// <returns>A failed result with no value.</returns>
-        public static Result<None> Failure(Error[] errors) => Result<None>.Failure(errors);
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="errors"/> is null.</exception>
+        public static Result<None> Failure(Error[] errors)
+        {
+            ArgumentNullException.ThrowIfNull(errors);
+            return Result<None>.Failure(errors);
+        }
 
         /// <summary>
         /// Creates a failed result with no value and a list of errors.
         /// </summary>
         /// <param name="errors">The errors that occurred.</param>
         /// <returns>A failed result with no value.</returns>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="errors"/> is null.</exception>
         public static Result<None> Failure(List<Error> errors) => Result<None>.Failure(errors);
 
         /// <summary>
@@ -397,6 +460,32 @@ namespace ErrorOrResult
         /// <returns>A successful result with the function's return value, or a failed result if an exception occurred.</returns>
         public static Result<TOutput> Try<TOutput>(Func<TOutput> func)
         {
+            ArgumentNullException.ThrowIfNull(func);
+            try
+            {
+                return Success(func());
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                return Failure<TOutput>(Error.Unexpected("Exception.Caught", DefaultExceptionDescription));
+            }
+        }
+
+        /// <summary>
+        /// Executes a function and captures any exceptions using a caller-supplied mapper.
+        /// </summary>
+        /// <typeparam name="TOutput">The type of the function's return value.</typeparam>
+        /// <param name="func">The function to execute.</param>
+        /// <param name="exceptionMapper">A function that converts a caught exception into an <see cref="Error"/>.</param>
+        /// <returns>A successful result with the function's return value, or a failed result mapped from the exception.</returns>
+        public static Result<TOutput> Try<TOutput>(Func<TOutput> func, Func<Exception, Error> exceptionMapper)
+        {
+            ArgumentNullException.ThrowIfNull(func);
+            ArgumentNullException.ThrowIfNull(exceptionMapper);
             try
             {
                 return Success(func());
@@ -407,7 +496,7 @@ namespace ErrorOrResult
             }
             catch (Exception ex)
             {
-                return Failure<TOutput>(Error.Unexpected("Exception.Caught", ex.Message));
+                return Failure<TOutput>(exceptionMapper(ex));
             }
         }
 
@@ -419,6 +508,32 @@ namespace ErrorOrResult
         /// <returns>A task representing a successful result with the function's return value, or a failed result if an exception occurred.</returns>
         public static async Task<Result<TOutput>> TryAsync<TOutput>(Func<Task<TOutput>> func)
         {
+            ArgumentNullException.ThrowIfNull(func);
+            try
+            {
+                return Success(await func().ConfigureAwait(false));
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                return Failure<TOutput>(Error.Unexpected("Exception.Caught", DefaultExceptionDescription));
+            }
+        }
+
+        /// <summary>
+        /// Executes an asynchronous function and captures any exceptions using a caller-supplied mapper.
+        /// </summary>
+        /// <typeparam name="TOutput">The type of the function's return value.</typeparam>
+        /// <param name="func">The asynchronous function to execute.</param>
+        /// <param name="exceptionMapper">A function that converts a caught exception into an <see cref="Error"/>.</param>
+        /// <returns>A task representing a successful result with the function's return value, or a failed result mapped from the exception.</returns>
+        public static async Task<Result<TOutput>> TryAsync<TOutput>(Func<Task<TOutput>> func, Func<Exception, Error> exceptionMapper)
+        {
+            ArgumentNullException.ThrowIfNull(func);
+            ArgumentNullException.ThrowIfNull(exceptionMapper);
             try
             {
                 return Success(await func().ConfigureAwait(false));
@@ -429,7 +544,7 @@ namespace ErrorOrResult
             }
             catch (Exception ex)
             {
-                return Failure<TOutput>(Error.Unexpected("Exception.Caught", ex.Message));
+                return Failure<TOutput>(exceptionMapper(ex));
             }
         }
 

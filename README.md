@@ -5,7 +5,7 @@
 
 A lightweight, functional .NET library for handling operation results with explicit success and error states. Inspired by the Result pattern, this library helps you write more robust and maintainable code by making error handling explicit and type-safe.
 
-> **✨ What's New in v1.0.4**: Bug fixes for uninitialized `Result<T>` state in `Match`, `Switch` and `Combine` methods, missing `ConfigureAwait(false)` in `TapAsync`, performance optimization of `MapError` allocations, and expanded test coverage including HTTP extensions. See [CHANGELOG.md](CHANGELOG.md) for details.
+> **✨ What's New in v1.1.0**: Security hardening of `Try`/`TryAsync`/`ToResultAsync` (exception messages no longer leaked by default — opt-in via new mapper overloads), internal `Result<T>` layout optimization (~50% smaller struct), new `Combine(other, IComparer<Error>?)` overload with built-in `ErrorComparers.BySeverityDescending`, stricter argument validation, `ToString` fix, LINQ-free HTTP mapping, and expanded regression tests. See [CHANGELOG.md](CHANGELOG.md) for details.
 
 ## Features
 
@@ -238,6 +238,68 @@ var errorInfo = new ErrorInfo(new[]
 var result = Result<User>.Failure(errorInfo);
 ```
 
+## Combining Results
+
+`Combine` merges two results into a tuple. If either fails, all errors are concatenated (left-first by default):
+
+```csharp
+Result<User> userResult = GetUser(id);
+Result<Order> orderResult = GetOrder(id);
+
+Result<(User, Order)> combined = userResult.Combine(orderResult);
+// If both succeed: combined.Value = (user, order)
+// If either (or both) fail: combined.ErrorInfo contains all errors, left-first
+```
+
+### Ordering combined errors by severity
+
+Use the opt-in overload to reorder combined errors — useful when the first error drives the HTTP status via `ToProblem()`:
+
+```csharp
+// Most client-actionable first (Validation > BadRequest > Conflict > Unauthorized > Forbidden > NotFound > Failure > Unexpected)
+Result<(User, Order)> combined = userResult.Combine(orderResult, ErrorComparers.BySeverityDescending);
+return combined.ToProblem(); // HTTP status is derived from the highest-severity error
+
+// Custom order: pass any IComparer<Error>
+var byCode = Comparer<Error>.Create((a, b) => string.Compare(a.Code, b.Code, StringComparison.Ordinal));
+var combined = userResult.Combine(orderResult, byCode);
+```
+
+Passing `null` keeps the default left-first ordering.
+
+## Exception Capture (`Try` / `TryAsync` / `ToResultAsync`)
+
+By default, captured exceptions are mapped to a generic `Error.Unexpected` — the exception `Message` is **intentionally not leaked** (avoids exposing internal details, stack hints or PII in error responses):
+
+```csharp
+Result<User> result = Result.Try(() => LoadUser(id));
+// On failure: Error.Unexpected("Exception.Caught", "An exception was thrown during execution.")
+```
+
+For custom diagnostics, use the opt-in overload that accepts a mapper:
+
+```csharp
+Result<User> result = Result.Try(
+    () => LoadUser(id),
+    ex => ex switch
+    {
+        FileNotFoundException fnf => Error.NotFound("User.File.Missing", fnf.FileName ?? "unknown"),
+        UnauthorizedAccessException      => Error.Forbidden("User.Access.Denied", "Access denied."),
+        _                                 => Error.Failure("User.Load.Failed", "Could not load user."),
+    });
+
+// Async variant
+Result<User> result = await Result.TryAsync(
+    () => LoadUserAsync(id),
+    ex => Error.Failure("User.Load", ex.GetType().Name));
+
+// Task<T>.ToResultAsync also supports an exception mapper
+Result<User> result = await LoadUserAsync(id).ToResultAsync(
+    ex => Error.Failure("User.Load", "Load failed"));
+```
+
+`OperationCanceledException` is always re-thrown (never captured) so cooperative cancellation works as expected.
+
 ## Requirements
 
 - .NET 10.0 or higher
@@ -286,8 +348,10 @@ This library uses a hybrid approach for method organization:
 - `Result.Success()` — creates a successful `Result<None>` (no return value)
 - `Result.Failure<TOutput>(Error|Error[]|List<Error>|ErrorInfo)` — creates a failed result
 - `Result.Failure(Error|Error[]|List<Error>|ErrorInfo)` — creates a failed `Result<None>`
-- `Result.Try<TOutput>(Func<TOutput>)` — executes a function, catches exceptions as `Error.Unexpected`; re-throws `OperationCanceledException`
+- `Result.Try<TOutput>(Func<TOutput>)` — executes a function, catches exceptions as a generic `Error.Unexpected` (exception message is **not** leaked by default); re-throws `OperationCanceledException`
+- `Result.Try<TOutput>(Func<TOutput>, Func<Exception, Error>)` — opt-in overload: maps caught exceptions to a caller-defined `Error`
 - `Result.TryAsync<TOutput>(Func<Task<TOutput>>)` — async version of `Try`
+- `Result.TryAsync<TOutput>(Func<Task<TOutput>>, Func<Exception, Error>)` — async `Try` with exception mapper
 - `Result.Create<TOutput>(value, error?)` — wraps nullable reference or value type; returns error if null
 - `Result.Ensure<TOutput>(value, predicate, error)` — returns success if predicate passes, otherwise error
 - `Result.Of<TOutput>(Func<Result<TOutput>>)` — executes and returns the function's result

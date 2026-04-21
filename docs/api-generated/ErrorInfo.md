@@ -18,7 +18,7 @@ Implements [System\.IEquatable&lt;](https://learn.microsoft.com/en-us/dotnet/api
 
 | Properties | |
 | :--- | :--- |
-| [AllErrors](ErrorInfo.AllErrors.md 'ErrorOrResult\.ErrorInfo\.AllErrors') | Gets all errors as an immutable array\. |
+| [AllErrors](ErrorInfo.AllErrors.md 'ErrorOrResult\.ErrorInfo\.AllErrors') | Gets all errors as an immutable array\. Returns an empty array when the instance is uninitialized \(default\)\. |
 | [Count](ErrorInfo.Count.md 'ErrorOrResult\.ErrorInfo\.Count') | Gets the number of errors in this instance\. |
 | [FirstError](ErrorInfo.FirstError.md 'ErrorOrResult\.ErrorInfo\.FirstError') | Gets the first error in the collection\. |
 

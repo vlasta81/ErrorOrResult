@@ -9,7 +9,7 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<PackageId>ErrorOrResult</PackageId>
-		<Version>1.0.4</Version>
+		<Version>1.1.0</Version>
 		<Authors>vlasta81</Authors>
 		<Company>vlasta81</Company>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>

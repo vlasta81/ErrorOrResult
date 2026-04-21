@@ -1,7 +1,8 @@
 ## ResultHttpExtensions\.ToProblem\(this ErrorInfo\) Method
 
 Converts error information to a Problem Details \(RFC 7807\) HTTP response\.
-Maps error types to appropriate HTTP status codes\.
+Maps error types to appropriate HTTP status codes\. The first error determines the status code;
+additional errors are surfaced in the `errors` extension field\.
 
 ```csharp
 public static Microsoft.AspNetCore.Http.IResult ToProblem(this ErrorOrResult.ErrorInfo errorInfo);
